@@ -648,3 +648,10 @@ table.data tr:last-child td { border-bottom: none; }
 
 ::selection { background: var(--sim); color: #05231f; }
 :focus-visible { outline: 2px solid var(--sim); outline-offset: 3px; border-radius: 3px; }
+
+.skip-link {
+  position: absolute; left: -9999px; top: 0; z-index: 100;
+  background: var(--sim); color: #071018; font-family: var(--font-mono);
+  font-size: 13px; padding: 10px 16px; border-radius: 0 0 8px 0;
+}
+.skip-link:focus { left: 0; }

@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to content</a>
 
 <header class="nav">
   <div class="wrap nav-inner">
@@ -55,7 +56,7 @@
 </section>
 
 <div class="wrap">
-<div class="doc">
+<div class="doc" id="main">
 
   <section class="doc-section">
     <h2>The physics</h2>
@@ -79,7 +80,7 @@ Cc &middot; dTc/dt = (Tw - Tc)/R_wc - (Tc - Ta)/R_ca   case node</div>
       </tbody>
     </table>
     <figure>
-      <div class="figure"><img src="assets/p2-rating.png" alt="Steady-state winding temperature versus sustained torque, marking the continuous rating and the hold demand"></div>
+      <div class="figure"><img src="assets/p2-rating.png" width="975" height="598" loading="lazy" decoding="async" alt="Steady-state winding temperature versus sustained torque, marking the continuous rating and the hold demand"></div>
       <figcaption>Steady-state winding temperature against sustained torque. The horizontal hold demands about 4 N m, well past the 2.77 N m continuous rating, into the region that exceeds the insulation limit.</figcaption>
     </figure>
   </section>
@@ -97,18 +98,18 @@ Cc &middot; dTc/dt = (Tw - Tc)/R_wc - (Tc - Ta)/R_ca   case node</div>
     </table>
     <p>The thermal-blind arm holds horizontal indefinitely. The thermal arm holds, heats past the derate threshold at about 55 seconds, loses the torque to fight gravity, and sags to a drooped equilibrium where the reduced gravity load matches what the hot motor can still deliver. Same controller, same commands, different outcome. That is the failure a thermal-blind sim hands to hardware.</p>
     <figure>
-      <div class="figure"><img src="assets/p2-filmstrip.png" alt="Filmstrip of the arm progressively sagging over time as the motor heats"></div>
+      <div class="figure"><img src="assets/p2-filmstrip.png" width="1352" height="338" loading="lazy" decoding="async" alt="Filmstrip of the arm progressively sagging over time as the motor heats"></div>
       <figcaption>The thermal-aware run over time. The shoulder holds, then sags as the winding heats and torque derates.</figcaption>
     </figure>
     <figure>
-      <div class="figure"><img src="assets/p2-derating.png" alt="Three panels: winding and case temperature, torque budget, and shoulder angle for thermal-blind versus thermal runs"></div>
+      <div class="figure"><img src="assets/p2-derating.png" width="1105" height="1170" loading="lazy" decoding="async" alt="Three panels: winding and case temperature, torque budget, and shoulder angle for thermal-blind versus thermal runs"></div>
       <figcaption>The mechanism end to end. Top: the winding crosses the derate threshold. Middle: available torque falls below the gravity demand. Bottom: the joint that held in the thermal-blind case sags in the thermal case.</figcaption>
     </figure>
   </section>
 
   <section class="doc-section">
     <h2>Why this is a differentiator</h2>
-    <p>This is the electronics-cooling and lumped-network thermal modeling I work in, carried into robotics simulation. Most sim-to-real effort tunes friction, damping, and inertia. Very little of it models the actuator as a thermal device, even though sustained-load derating is a real and common reason a sim-tuned policy underperforms on hardware. The model here is small, physically grounded, and drops into any torque-controlled joint.</p>
+    <p>This is the electronics-cooling and lumped-network thermal modeling I work in and publish, most recently thermal resistance network analysis of a two-phase cooling module at IEEE ITherm 2026, carried into robotics simulation. Most sim-to-real effort tunes friction, damping, and inertia. Very little of it models the actuator as a thermal device, even though sustained-load derating is a real and common reason a sim-tuned policy underperforms on hardware. The model here is small, physically grounded, and drops into any torque-controlled joint.</p>
     <div class="callout">
       <span class="tag-lbl">The gap it closes</span>
       <p>Friction and inertia identification make a model match short, cool motions. They say nothing about a joint that has been holding load for a minute. Thermal derating is where a sim that looked validated still lies to the controller.</p>

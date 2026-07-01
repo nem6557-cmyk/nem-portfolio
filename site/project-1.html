@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to content</a>
 
 <header class="nav">
   <div class="wrap nav-inner">
@@ -41,7 +42,7 @@
   <a class="back" href="index.html">&larr; All projects</a>
   <span class="eyebrow">P1 &middot; System identification</span>
   <h1>High-fidelity arm model and sim-to-real parameter identification</h1>
-  <p class="lede">Build an arm whose dynamics are right for the right reasons, then recover the parameters no drawing lists, friction, damping, and the true motor torque constant, from data alone. Validate on motion the fit never saw.</p>
+  <p class="lede">Build an arm whose dynamics are right for the right reasons, then recover what no drawing lists: friction, damping, and the true motor torque constant, from data alone. Validate on motion the fit never saw.</p>
   <div class="tags">
     <span class="tag">MuJoCo 3.x</span><span class="tag">MJCF</span><span class="tag">Analytic inertia</span>
     <span class="tag">Multiple shooting</span><span class="tag">SciPy least squares</span><span class="tag">ROS2 / rclpy</span>
@@ -55,7 +56,7 @@
 </section>
 
 <div class="wrap">
-<div class="doc">
+<div class="doc" id="main">
 
   <section class="doc-section">
     <h2>The idea</h2>
@@ -67,7 +68,7 @@
     <p>The arm is a 3-DOF manipulator: a yaw joint at the base, then shoulder and elbow pitch joints, with a 0.5 kg payload at the tip. Each link is a hollow aluminum tube. Rather than approximate the links with primitives and let the simulator guess, the inertia tensor of every link is computed analytically from its wall geometry and the density of 6061 aluminum, then rotated into the body frame and written straight into the MJCF.</p>
     <p>This is the discipline of a mechanical designer carried into the place it actually changes the physics. In a static CAD model the inertia tensor is metadata. In a dynamics simulation it sets how every joint accelerates, so getting it right from geometry removes a whole class of sim-to-real error before any tuning starts.</p>
     <figure>
-      <div class="figure"><img src="assets/p1-arm-pose.png" alt="Rendered 3-DOF arm in its reference pose with labeled links and payload"></div>
+      <div class="figure"><img src="assets/p1-arm-pose.png" width="640" height="480" loading="lazy" decoding="async" alt="Rendered 3-DOF arm in its reference pose with labeled links and payload"></div>
       <figcaption>The arm in its reference pose. Link inertias are derived from tube geometry and aluminum density, not fitted or auto-approximated.</figcaption>
     </figure>
   </section>
@@ -76,7 +77,7 @@
     <h2>Exciting the system</h2>
     <p>To identify parameters you need motion that stirs all of them. Each joint is driven with a multi-sine torque, a sum of sinusoids at different frequencies and phases, which excites the arm across a broad band without dwelling at any single resonance. The simulation logs joint positions, velocities, and applied torques, and measurement noise is added to the recorded angles so the identification faces a realistic signal rather than clean truth.</p>
     <figure>
-      <div class="figure"><img src="assets/p1-excitation.png" alt="Multi-sine excitation torques and the resulting joint trajectories over time"></div>
+      <div class="figure"><img src="assets/p1-excitation.png" width="1040" height="780" loading="lazy" decoding="async" alt="Multi-sine excitation torques and the resulting joint trajectories over time"></div>
       <figcaption>Multi-sine excitation and the response it produces. Broadband input makes every parameter observable in the data.</figcaption>
     </figure>
   </section>
@@ -86,11 +87,11 @@
     <p>Seven parameters are unknown: damping and dry friction at each of the three joints, plus a single scale on the motor torque constant. They are recovered by multiple shooting. The trajectory is split into short windows, the model is integrated across each window, and a nonlinear least-squares solver adjusts all seven parameters at once to make the simulated windows match the measured data. Multiple shooting keeps the optimization well conditioned over long trajectories where a single long rollout would drift and stall.</p>
     <p>The solver starts from a deliberately naive guess, uniform damping and friction and a motor gain of 1.0, so the recovery is honest about starting far from the answer.</p>
     <figure>
-      <div class="figure"><img src="assets/p1-convergence.png" alt="Cost function decreasing over solver iterations until convergence"></div>
+      <div class="figure"><img src="assets/p1-convergence.png" width="910" height="520" loading="lazy" decoding="async" alt="Cost function decreasing over solver iterations until convergence"></div>
       <figcaption>The residual falls by orders of magnitude as the seven parameters converge from the naive starting point.</figcaption>
     </figure>
     <figure>
-      <div class="figure"><img src="assets/p1-parameter-recovery.png" alt="Bar chart comparing identified parameter values against ground truth for all seven parameters"></div>
+      <div class="figure"><img src="assets/p1-parameter-recovery.png" width="1170" height="585" loading="lazy" decoding="async" alt="Bar chart comparing identified parameter values against ground truth for all seven parameters"></div>
       <figcaption>Identified values against ground truth. Mean error is 1.1 percent across all seven, and the motor-gain scale lands within 0.09 percent.</figcaption>
     </figure>
   </section>
@@ -99,11 +100,11 @@
     <h2>Validation is the point</h2>
     <p>Matching the data you fit on proves very little. The identified model is tested on a completely separate trajectory, generated with different excitation frequencies and phases and a different noise seed, and run fully open loop with no correction. A model that only memorized the training motion falls apart here. This one tracks the real arm across all three joints for the length of the run.</p>
     <figure>
-      <div class="figure"><img src="assets/p1-validation.png" alt="Identified model tracking the true arm on a held-out trajectory across three joints"></div>
+      <div class="figure"><img src="assets/p1-validation.png" width="1040" height="845" loading="lazy" decoding="async" alt="Identified model tracking the true arm on a held-out trajectory across three joints"></div>
       <figcaption>Held-out open-loop validation. The identified model (dashed) overlays the true arm (solid) on motion it was never fit to.</figcaption>
     </figure>
     <figure>
-      <div class="figure"><img src="assets/p1-rmse.png" alt="Prediction RMSE per joint for the naive model versus the identified model"></div>
+      <div class="figure"><img src="assets/p1-rmse.png" width="975" height="559" loading="lazy" decoding="async" alt="Prediction RMSE per joint for the naive model versus the identified model"></div>
       <figcaption>Bounded-horizon prediction error, naive versus identified. Recovering the parameters cuts error by 98 to 99.5 percent per joint.</figcaption>
     </figure>
 

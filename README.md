@@ -17,8 +17,11 @@ source lives in [`site/`](site) and is a dependency-free static build.
 My background is thermal-fluid systems and high-heat-flux electronics cooling,
 with heavy day-to-day use of CAD, finite-element and CFD tooling, rigid-body
 mechanics, and Python or MATLAB for modelling and parameter estimation. That
-maps onto robotics simulation more directly than it first appears, and these
-two projects lead with that overlap rather than hiding it.
+work is peer reviewed, including thermal resistance network analysis of a
+two-phase cooling module at IEEE ITherm 2026, the same class of model Project 2
+couples into MuJoCo. It maps onto robotics simulation more directly than it
+first appears, and these two projects lead with that overlap rather than
+hiding it.
 
 Project 1 is the core competency the role asks for, done carefully: an MJCF
 whose link inertias are derived analytically from geometry and material (the
