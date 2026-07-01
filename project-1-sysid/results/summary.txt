@@ -1,0 +1,5 @@
+System identification summary
+mean parameter error: 1.11%
+held-out RMSE naive [deg]: [16.86, 17.44, 23.3]
+held-out RMSE identified [deg]: [0.27, 0.2, 0.12]
+RMSE reduction: [98.4, 98.8, 99.5] %

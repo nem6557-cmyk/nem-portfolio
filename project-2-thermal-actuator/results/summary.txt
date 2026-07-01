@@ -1,0 +1,6 @@
+Thermal actuator demo summary
+continuous torque rating: 2.77 N m
+horizontal hold demand: ~4 N m (exceeds rating)
+peak winding temp: 106.0 degC
+naive final shoulder angle: 0.00 deg
+thermal final shoulder angle: 38.37 deg

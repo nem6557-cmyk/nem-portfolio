@@ -1,0 +1,5 @@
+# Netlify build configuration
+# The portfolio is a static site living in the site/ directory.
+# No build step is required; Netlify serves the folder directly.
+[build]
+  publish = "site"

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thermal Coupling - Nooruldeen Mustafa</title>
+<meta name="description" content="A two-node motor thermal network coupled into MuJoCo. The winding heats under sustained load, torque derates, and the arm sags, a sim-to-real failure mode friction tuning never catches.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html" aria-label="Home">
+      <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
+        <line x1="8" y1="12" x2="20" y2="12" stroke="#4FD1C5" stroke-width="2.4" stroke-linecap="round"/>
+        <line x1="20" y1="12" x2="25" y2="22" stroke="#FF8A5B" stroke-width="2.4" stroke-linecap="round"/>
+        <circle cx="8" cy="12" r="3" fill="#0B1220" stroke="#4FD1C5" stroke-width="2.4"/>
+        <circle cx="20" cy="12" r="2.6" fill="#0B1220" stroke="#E8EDF4" stroke-width="2.2"/>
+        <circle cx="25" cy="22" r="2.6" fill="#FF8A5B"/>
+      </svg>
+      Nooruldeen Mustafa
+    </a>
+    <button class="nav-toggle" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5h14M2 9h14M2 13h14"/></svg>
+    </button>
+    <nav class="nav-links">
+      <a href="index.html#projects">projects</a>
+      <a href="index.html#approach">approach</a>
+      <a href="index.html#about">about</a>
+      <a class="gh" href="https://github.com/your-username/robotics-sim-portfolio" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<section class="doc-hero wrap">
+  <a class="back" href="index.html">&larr; All projects</a>
+  <span class="eyebrow real">P2 &middot; Thermal coupling</span>
+  <h1>Thermally coupled actuator model for sim-to-real torque limits</h1>
+  <p class="lede">Model the motor as a thermal device, not a constant torque source. A joint holding a heavy pose heats its windings, the drive derates torque to protect the insulation, and the reachable torque falls. A thermal-blind sim lets a controller command holds the hardware cannot sustain.</p>
+  <div class="tags">
+    <span class="tag">MuJoCo 3.x</span><span class="tag">Two-node RC network</span><span class="tag">RK4</span>
+    <span class="tag">Torque derating</span><span class="tag">Gravity-comp PD</span><span class="tag">Python</span>
+  </div>
+  <div class="readout-bar">
+    <div class="cell real"><div class="val">2.77 Nm</div><div class="lbl">CONTINUOUS RATING</div></div>
+    <div class="cell real"><div class="val">38&deg;</div><div class="lbl">SAG UNDER LOAD</div></div>
+    <div class="cell real"><div class="val">106 C</div><div class="lbl">PEAK WINDING TEMP</div></div>
+    <div class="cell"><div class="val">0&deg;</div><div class="lbl">SAG, THERMAL-BLIND SIM</div></div>
+  </div>
+</section>
+
+<div class="wrap">
+<div class="doc">
+
+  <section class="doc-section">
+    <h2>The physics</h2>
+    <p>Torque is proportional to motor current, and copper loss scales with the square of current. Holding torque therefore dissipates heat in the windings continuously, even when the arm is not moving. That heat is modeled with a two-node lumped-capacitance thermal network, the same resistance-capacitance abstraction used across electronics cooling, here mapped onto a motor: a fast winding node and a slower case node, each with a heat capacity, linked by thermal resistances to each other and to ambient.</p>
+    <div class="eq">P_cu = c_loss &middot; tau^2                         copper loss
+Cw &middot; dTw/dt = P_cu - (Tw - Tc)/R_wc            winding node
+Cc &middot; dTc/dt = (Tw - Tc)/R_wc - (Tc - Ta)/R_ca   case node</div>
+    <p>Torque available to the controller rolls off linearly once the winding passes a derate threshold and is clamped at an insulation limit. Because dissipation grows with the square of torque, the feedback between load and heat is sharp, which is exactly why it surprises a controller tuned without it.</p>
+  </section>
+
+  <section class="doc-section">
+    <h2>Characterization</h2>
+    <p>The model is not only for simulation. It exposes closed-form analysis so the actuator can be sized. The continuous torque rating is the sustained torque whose steady-state winding temperature sits at the derate threshold. The two thermal time constants are the eigenvalues of the network, a fast winding response and a slow case response.</p>
+    <table class="data">
+      <thead><tr><th>Quantity</th><th class="mono">Value</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>Peak torque</td><td class="mono">6.00 Nm</td><td>short-term, thermally unconstrained</td></tr>
+        <tr><td>Continuous rating</td><td class="mono"><span class="t-real">2.77 Nm</span></td><td>sustainable within the derate threshold</td></tr>
+        <tr><td>Winding time constant</td><td class="mono">10.6 s</td><td>how fast the winding heats</td></tr>
+        <tr><td>Case time constant</td><td class="mono">169 s</td><td>how fast the housing follows</td></tr>
+      </tbody>
+    </table>
+    <figure>
+      <div class="figure"><img src="assets/p2-rating.png" alt="Steady-state winding temperature versus sustained torque, marking the continuous rating and the hold demand"></div>
+      <figcaption>Steady-state winding temperature against sustained torque. The horizontal hold demands about 4 N m, well past the 2.77 N m continuous rating, into the region that exceeds the insulation limit.</figcaption>
+    </figure>
+  </section>
+
+  <section class="doc-section">
+    <h2>The demonstration</h2>
+    <p>The arm is commanded to hold a fully extended horizontal pose with a payload, which needs roughly 4 N m at the shoulder. The controller is a correct gravity-compensating PD law and is identical in both runs. The only thing that changes is the actuator model.</p>
+    <table class="data">
+      <thead><tr><th>&nbsp;</th><th>Thermal-blind actuator</th><th>Thermal actuator</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">torque available</td><td>peak, always</td><td>derates with winding temp</td></tr>
+        <tr><td class="mono">final shoulder angle</td><td><span class="t-sim">0&deg; (holds)</span></td><td><span class="t-real">38&deg; (sags)</span></td></tr>
+        <tr><td class="mono">peak winding temp</td><td>not modeled</td><td><span class="t-real">106 C</span></td></tr>
+      </tbody>
+    </table>
+    <p>The thermal-blind arm holds horizontal indefinitely. The thermal arm holds, heats past the derate threshold at about 55 seconds, loses the torque to fight gravity, and sags to a drooped equilibrium where the reduced gravity load matches what the hot motor can still deliver. Same controller, same commands, different outcome. That is the failure a thermal-blind sim hands to hardware.</p>
+    <figure>
+      <div class="figure"><img src="assets/p2-filmstrip.png" alt="Filmstrip of the arm progressively sagging over time as the motor heats"></div>
+      <figcaption>The thermal-aware run over time. The shoulder holds, then sags as the winding heats and torque derates.</figcaption>
+    </figure>
+    <figure>
+      <div class="figure"><img src="assets/p2-derating.png" alt="Three panels: winding and case temperature, torque budget, and shoulder angle for thermal-blind versus thermal runs"></div>
+      <figcaption>The mechanism end to end. Top: the winding crosses the derate threshold. Middle: available torque falls below the gravity demand. Bottom: the joint that held in the thermal-blind case sags in the thermal case.</figcaption>
+    </figure>
+  </section>
+
+  <section class="doc-section">
+    <h2>Why this is a differentiator</h2>
+    <p>This is the electronics-cooling and lumped-network thermal modeling I work in, carried into robotics simulation. Most sim-to-real effort tunes friction, damping, and inertia. Very little of it models the actuator as a thermal device, even though sustained-load derating is a real and common reason a sim-tuned policy underperforms on hardware. The model here is small, physically grounded, and drops into any torque-controlled joint.</p>
+    <div class="callout">
+      <span class="tag-lbl">The gap it closes</span>
+      <p>Friction and inertia identification make a model match short, cool motions. They say nothing about a joint that has been holding load for a minute. Thermal derating is where a sim that looked validated still lies to the controller.</p>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Run it</h2>
+<pre><code>pip install mujoco numpy matplotlib
+
+python src/thermal_actuator.py            # characterization report
+MUJOCO_GL=egl python src/run_thermal_demo.py   # thermal-blind vs thermal A/B</code></pre>
+  </section>
+
+  <section class="doc-section">
+    <h2>How it maps to the role</h2>
+    <ul>
+      <li><strong>Actuator models for sim-to-real.</strong> A first-principles thermal actuator that changes the achievable torque envelope, which is the crux of sim-to-real for high-duty holds.</li>
+      <li><strong>Physics parameter tuning.</strong> Thermal resistances, capacitances, and the loss coefficient are the parameters; the closed-form rating and time-constant analysis show how to choose them.</li>
+      <li><strong>Pipelines and validation.</strong> A reproducible A/B with quantitative outcomes and rendered evidence.</li>
+      <li><strong>Clean Python.</strong> A small, well-documented, dependency-light class that composes with any MuJoCo torque-controlled model.</li>
+    </ul>
+  </section>
+
+</div>
+</div>
+
+<nav class="wrap next-nav">
+  <a href="project-1.html">&larr; Previous: System identification</a>
+  <a href="index.html">All projects &rarr;</a>
+</nav>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="colophon">
+      <span>Built as a static site. MuJoCo 3.x &middot; Python.</span>
+      <span>&copy; <span id="year">2026</span> Nooruldeen Mustafa</span>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>
