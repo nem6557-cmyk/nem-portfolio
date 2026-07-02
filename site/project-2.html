@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0B1220">
 <title>Thermal Coupling - Nooruldeen Mustafa</title>
 <meta name="description" content="A two-node motor thermal network coupled into MuJoCo. The winding heats under sustained load, torque derates, and the arm sags, a sim-to-real failure mode friction tuning never catches.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -98,7 +99,7 @@ Cc &middot; dTc/dt = (Tw - Tc)/R_wc - (Tc - Ta)/R_ca   case node</div>
     </table>
     <p>The thermal-blind arm holds horizontal indefinitely. The thermal arm holds, heats past the derate threshold at about 55 seconds, loses the torque to fight gravity, and sags to a drooped equilibrium where the reduced gravity load matches what the hot motor can still deliver. Same controller, same commands, different outcome. That is the failure a thermal-blind sim hands to hardware.</p>
     <figure>
-      <div class="figure"><img src="assets/p2-filmstrip.png" width="1352" height="338" loading="lazy" decoding="async" alt="Filmstrip of the arm progressively sagging over time as the motor heats"></div>
+      <div class="figure"><img src="assets/p2-filmstrip.png" width="1585" height="409" loading="lazy" decoding="async" alt="Filmstrip of the arm progressively sagging over time as the motor heats"></div>
       <figcaption>The thermal-aware run over time. The shoulder holds, then sags as the winding heats and torque derates.</figcaption>
     </figure>
     <figure>

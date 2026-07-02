@@ -292,3 +292,12 @@
     boot();
   }
 })();
+
+/* elevated nav state after scroll */
+(function () {
+  var nav = document.querySelector(".nav");
+  if (!nav) return;
+  function onScroll() { nav.classList.toggle("scrolled", window.scrollY > 8); }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+})();
