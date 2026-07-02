@@ -108,3 +108,7 @@ cd ../project-6-task-pack && python grade_all.py
 
 Headless rendering uses EGL (`MUJOCO_GL=egl`) where figures need GL;
 all numerical results regenerate without a display.
+
+## The labs
+
+Fifteen compact builds in `labs/`, three each across five benches: `ngspice/` (circuit simulation, including the project 2 thermal network solved as a SPICE circuit and agreeing to 4.5 mK), `paraview/` (headless VTK renders of the real dissertation CFD fields, with pvpython twins), `ml/` (a GP surrogate at 1.46 K cross-validated RMSE on 261 real data points, a PINN benchmarked honestly against Crank-Nicolson, a CV-pitfall study), `ai-eval/` (mutation testing the project 6 checkers to 79/79 sensitivity, tolerance sweeps, item-response analysis), and `fun/` (prayer times from solar geometry, measured chaos, plume art). Every lab ships `run_lab.py`, `RESULTS.txt`, and its figure; every number on the site's labs pages comes from those logs.
