@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RL Reach Environment - Nooruldeen Mustafa</title>
+<meta name="description" content="A gymnasium MuJoCo reach environment built and debugged from scratch: an MJCF unit bug, a gravity exploration trap diagnosed with scripted baselines and a reference implementation, and a reward shaping ablation with honest curves.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html" aria-label="Home">
+      <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
+        <line x1="8" y1="12" x2="20" y2="12" stroke="#4FD1C5" stroke-width="2.4" stroke-linecap="round"/>
+        <line x1="20" y1="12" x2="25" y2="22" stroke="#FF8A5B" stroke-width="2.4" stroke-linecap="round"/>
+        <circle cx="8" cy="12" r="3" fill="#0B1220" stroke="#4FD1C5" stroke-width="2.4"/>
+        <circle cx="20" cy="12" r="2.6" fill="#0B1220" stroke="#E8EDF4" stroke-width="2.2"/>
+        <circle cx="25" cy="22" r="2.6" fill="#FF8A5B"/>
+      </svg>
+      Nooruldeen Mustafa
+    </a>
+    <button class="nav-toggle" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5h14M2 9h14M2 13h14"/></svg>
+    </button>
+    <nav class="nav-links">
+      <a href="index.html#projects">projects</a>
+      <a href="index.html#approach">approach</a>
+      <a href="index.html#about">about</a>
+      <a class="gh" href="https://github.com/your-username/robotics-sim-portfolio" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<section class="doc-hero wrap">
+  <a class="back" href="index.html">&larr; All projects</a>
+  <span class="eyebrow real">P3 &middot; RL environment design</span>
+  <h1>A reach environment built, broken, and debugged from first principles</h1>
+  <p class="lede">A gymnasium environment around the same 3-DOF gravity-loaded arm, a PPO reward shaping ablation, and the part that matters: the debugging. Two environment bugs made reinforcement learning look impossible, and both were found the way an engineer finds them, with scripted baselines, constraint-force inspection, and an honest comparison against a reference implementation.</p>
+  <div class="tags">
+    <span class="tag">Gymnasium API</span><span class="tag">MuJoCo MJCF</span><span class="tag">PPO (SB3)</span>
+    <span class="tag">Reward shaping</span><span class="tag">Scripted baselines</span><span class="tag">Python</span>
+  </div>
+  <div class="readout-bar">
+    <div class="cell real"><div class="val">70%</div><div class="lbl">SUCCESS, SHAPED REWARD</div></div>
+    <div class="cell real"><div class="val">19.2 mm</div><div class="lbl">MEDIAN HOLD DISTANCE</div></div>
+    <div class="cell"><div class="val">0%</div><div class="lbl">SUCCESS, SPARSE REWARD</div></div>
+    <div class="cell"><div class="val">72%</div><div class="lbl">SCRIPTED PD BASELINE</div></div>
+  </div>
+</section>
+
+<div class="wrap">
+<div class="doc" id="main">
+
+  <section class="doc-section">
+    <h2>The task</h2>
+    <p>Reach a randomly placed 3D target with the fingertip and hold it inside a 25 mm tolerance. The arm is the project 1 and 2 hardware model: three torque-controlled joints, joint damping and dry friction at the identified values, a 250 g payload, and a 6 Nm torque budget per joint. Episodes run 3 seconds at 50 Hz control. Success requires the mean fingertip error over the final 0.4 s to sit inside tolerance, so the policy must arrive and hold, not fly through.</p>
+    <div class="eq">observation (12): qpos(3), tanh(qvel/8)(3), target xyz(3), target - tip(3)
+action (3):       joint torques, clipped to +/-6 Nm
+success:          mean tail distance &lt; 25 mm over the last 20 steps</div>
+    <p>Targets are sampled by drawing joint configurations, running forward kinematics, and rejecting anything below 10 cm height. Sampling in joint space guarantees every target is reachable, and keeping the generating configuration makes a scripted joint-space baseline possible, which turned out to be the most valuable diagnostic tool in the project.</p>
+  </section>
+
+  <section class="doc-section">
+    <h2>Bug one: the arm that could only move 2.6 degrees</h2>
+    <p>The first training runs flatlined at 0% success with the median fingertip error stuck near 600 mm, so before touching a hyperparameter the environment got a controller of known quality: a joint-space PD driving toward each target's generating configuration. It also scored 0%, which acquitted the learning algorithm and indicted the physics.</p>
+    <p>A minimal torque test told the rest. Two newton meters commanded on the yaw joint moved it to 0.046 rad and froze it there, with the constraint solver reporting a reaction torque of exactly minus 2.0 Nm and zero contacts active. A joint frozen by a constraint at qpos 0.046 with nothing touching it means a joint limit, and 0.046 rad is 2.6 degrees. MJCF parses angles as degrees by default. Ranges written as radians had compiled 57 times too small, and the whole arm was living inside a 2.6 degree cone.</p>
+    <div class="eq">&lt;compiler angle="radian"/&gt;   &lt;!-- one line; the difference between
+                                  a reach task and a statue --&gt;</div>
+    <div class="callout">
+      <span class="tag-lbl">The instrument that found it</span>
+      <p>Not the learning curves. A scripted PD baseline plus a look at qfrc_constraint. Constraint forces balancing actuation at a pose far from any declared limit, with zero contacts, is a two-minute diagnosis once the right signal is on screen.</p>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Bug two: gravity as an exploration trap</h2>
+    <p>With the units fixed, the PD baseline improved to a 71 mm median hold, and that number is itself informative: a proportional controller with gain 30 fighting a 4 Nm gravity load leaves tau/kp of about 0.13 rad of droop, which is roughly 85 mm at the fingertip. Adding a gravity feedforward closed it to 7.2 mm and 67% success. The environment was feasible. RL still learned nothing.</p>
+    <p>The reason was measurable. Holding the arm up takes plus 2 to plus 4.3 Nm at the shoulder. A zero-mean Gaussian exploration policy essentially never samples that region, so every rollout collapses into the same fallen pose, and the returns stop carrying information about the actions. The correlation between advantages and action noise measured 0.02 to 0.07 with sign flips between batches, for a from-scratch PPO and for reference Stable-Baselines3 PPO alike: SB3 sat at 0% success after a quarter-million steps on the broken task. When two independent implementations fail identically, the environment is the suspect.</p>
+    <p>The fix is what real arms do. Impedance-controlled robots run model-based gravity compensation in the low-level controller, and the policy commands residual torque around it. In MuJoCo that is one attribute, gravcomp="1" on the moving links. The same PD that drooped 71 mm scores 72% with a 9.3 mm median hold under compensation, with no feedforward and no model knowledge, and learning finally has a gradient to climb.</p>
+    <div class="callout">
+      <span class="tag-lbl">The project 1 connection</span>
+      <p>Gravity compensation is computed from the model, so it is exactly as good as the identification behind it. You can only compensate the gravity you have modeled. That is the thread running through this whole portfolio: model quality is not an academic score, it is control authority.</p>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>The ablation: what the reward is for</h2>
+    <p>With the environment trustworthy, the experiment is clean. Two PPO runs, identical budgets of 600k steps, identical seeds, hyperparameters, and network. Only the reward differs.</p>
+    <div class="eq">shaped: r = -d + 8 (d_prev - d) - 1e-3 |a|^2 + [d &lt; 25 mm]
+sparse: r = [d &lt; 25 mm]</div>
+    <p>The progress term is potential-based shaping with potential proportional to distance, which provably cannot change the optimal policy, but converts "get closer" from a multi-step credit assignment inference into one-step credit. Evaluation is deterministic on 40 fixed targets every 25k steps, so the curves measure the policy, not the exploration noise.</p>
+    <figure>
+      <div class="figure"><img src="assets/p3-curves.png" width="1385" height="576" loading="lazy" decoding="async" alt="Two panels: success rate and median hold distance versus training steps for shaped and sparse rewards"></div>
+      <figcaption>Same task, same budget, same algorithm. The shaped run reaches 70% success with a 19.2 mm median hold. The sparse run never finds the tolerance region even once, so it never receives a nonzero reward to learn from.</figcaption>
+    </figure>
+    <figure>
+      <div class="figure"><img src="assets/p3-rollout.png" width="1620" height="390" loading="lazy" decoding="async" alt="Six-frame filmstrip of the trained arm swinging to a target and holding within tolerance"></div>
+      <figcaption>The trained shaped policy on one held-out target: 461 mm of travel closed to a 9.4 mm hold. Frames rendered from the actual rollout by forward kinematics.</figcaption>
+    </figure>
+  </section>
+
+  <section class="doc-section">
+    <h2>Honest scope</h2>
+    <p>70% is not 100%, and the failures are structured: targets requiring large yaw swings behind the arm are where the deterministic policy still misses, and a single training seed per arm of the ablation means the exact numbers carry seed noise. The from-scratch PPO written for this project was retired after the reference comparison; its policy gradient sat below the trajectory-variance noise floor at this batch size, and the honest move was to localize the remaining problems with a known-good trainer rather than ship a hand-rolled one. The environment, reward design, baselines, and evaluation harness are the work product here.</p>
+  </section>
+
+  <section class="doc-section">
+    <h2>Run it</h2>
+<pre><code>pip install mujoco gymnasium stable-baselines3 numpy matplotlib
+
+python src/train_p3.py          # both arms of the ablation, ~35 min CPU
+python src/make_figures.py      # curves and rollout filmstrip</code></pre>
+  </section>
+
+  <section class="doc-section">
+    <h2>How it maps to the role</h2>
+    <ul>
+      <li><strong>Design and implement MuJoCo environments.</strong> A complete gymnasium environment with a defensible observation and action space, feasibility-guaranteed target sampling, and a hold-based success criterion.</li>
+      <li><strong>Read and write MJCF with physics understanding.</strong> The degree-parsing bug is exactly the class of model-file error that silently destroys a task, found through constraint-force inspection rather than guesswork.</li>
+      <li><strong>Debug contact dynamics and simulation behavior.</strong> Scripted PD baselines, qfrc inspection, floor-contact reasoning, and a measured exploration-trap diagnosis with the correlation numbers to back it.</li>
+      <li><strong>Reward function design.</strong> A potential-based shaping term with the theory cited and an ablation quantifying what it buys: 70% versus 0% at equal budget.</li>
+      <li><strong>Evaluate trained policies.</strong> Deterministic fixed-target evaluation separated from training noise, with a scripted controller as the floor any policy must beat.</li>
+    </ul>
+  </section>
+
+</div>
+</div>
+
+<nav class="wrap next-nav">
+  <a href="project-2.html">&larr; Previous: Thermal coupling</a>
+  <a href="project-4.html">Next: Domain randomization &rarr;</a>
+</nav>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="colophon">
+      <span>Built as a static site. MuJoCo 3.x &middot; Python.</span>
+      <span>&copy; <span id="year">2026</span> Nooruldeen Mustafa</span>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>

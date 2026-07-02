@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nooruldeen Mustafa - Robotics Simulation</title>
-<meta name="description" content="Physics simulation for robotics, built to close the sim-to-real gap. High-fidelity MuJoCo models, sim-to-real parameter identification, and thermal actuator modeling.">
-<meta property="og:title" content="Nooruldeen Mustafa - Robotics Simulation">
-<meta property="og:description" content="High-fidelity MuJoCo models, sim-to-real parameter identification, and a thermal actuator model that catches a failure mode most sims ignore.">
+<title>Nooruldeen Mustafa - Physics Simulation</title>
+<meta name="description" content="Physics simulation across two tracks: MuJoCo robotics with sim-to-real identification, RL environments, and domain randomization; and OpenSees nonlinear structural analysis with machine-gradable AI task design.">
+<meta property="og:title" content="Nooruldeen Mustafa - Physics Simulation">
+<meta property="og:description" content="Six projects, two tracks: robotics sim-to-real in MuJoCo, and nonlinear structural analysis with AI task design in OpenSees.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="assets/p2-filmstrip.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -65,9 +65,9 @@
 <section class="hero wrap">
   <div class="hero-grid">
     <div class="hero-text reveal">
-      <span class="eyebrow">Robotics simulation &middot; sim-to-real</span>
+      <span class="eyebrow">Physics simulation &middot; robotics and structures</span>
       <h1>Simulations built to survive contact with <span class="gap">reality</span>.</h1>
-      <p class="lede">I build high-fidelity physics models in MuJoCo and close the distance between what the simulator promises and what the hardware does. <strong>PhD-level thermal and rigid-body modeling, pointed at robotics.</strong></p>
+      <p class="lede">I build physics models that earn trust: MuJoCo robotics with identified parameters, RL environments, and measured transfer on one track; OpenSees nonlinear structural analysis and machine-gradable AI tasks on the other. <strong>PhD-level modeling, pointed at simulation work that has to be right.</strong></p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="#projects">See the projects <span class="arr">&rarr;</span></a>
         <a class="btn btn-ghost" href="https://github.com/your-username/robotics-sim-portfolio" target="_blank" rel="noopener">View the code</a>
@@ -123,9 +123,11 @@
 <section class="section" id="projects">
   <div class="wrap">
     <div class="section-head reveal">
-      <h2>Two projects, one problem</h2>
-      <p>Both run headless in MuJoCo. Both produce quantitative results against a known ground truth. Both are written to be read and reproduced.</p>
+      <h2>Six projects, two tracks</h2>
+      <p>Every project runs headless, produces quantitative results against a known reference, and is written to be read and reproduced. Track one is robotics sim-to-real in MuJoCo. Track two is nonlinear structural analysis and AI task design in OpenSees.</p>
     </div>
+
+    <div class="track-label reveal"><span>Track 1</span> Robotics &middot; sim-to-real in MuJoCo</div>
 
     <!-- Project 1 -->
     <article class="project">
@@ -178,6 +180,112 @@
         </div>
       </div>
     </article>
+
+    <!-- Project 3 -->
+    <article class="project">
+      <div class="project-grid">
+        <div class="project-body reveal">
+          <div class="project-kicker"><span class="idx">P3</span> RL environment design</div>
+          <h3 class="title">A reach environment built, broken, and debugged from first principles</h3>
+          <p class="hook">A gymnasium environment on the same arm, a reward shaping ablation, and the debugging that mattered: an MJCF unit bug found through constraint forces, and a gravity exploration trap diagnosed with scripted baselines and a reference implementation.</p>
+          <div class="metrics">
+            <div class="metric real"><div class="val">70%</div><div class="lbl">success, shaped reward</div></div>
+            <div class="metric real"><div class="val">19.2 mm</div><div class="lbl">median hold</div></div>
+            <div class="metric"><div class="val">0%</div><div class="lbl">success, sparse reward</div></div>
+          </div>
+          <div class="tags">
+            <span class="tag">Gymnasium</span><span class="tag">MJCF</span><span class="tag">PPO</span>
+            <span class="tag">Reward shaping</span><span class="tag">Python</span>
+          </div>
+          <a class="link-arrow" href="project-3.html">Read the write-up <span>&rarr;</span></a>
+        </div>
+        <div class="project-media reveal">
+          <figure class="figure">
+            <img src="assets/p3-rollout.png" width="1620" height="390" loading="lazy" decoding="async" alt="Filmstrip of the trained arm swinging to a target and holding inside tolerance">
+          </figure>
+        </div>
+      </div>
+    </article>
+
+    <!-- Project 4 -->
+    <article class="project flip">
+      <div class="project-grid">
+        <div class="project-media reveal">
+          <figure class="figure">
+            <img src="assets/p4-transfer.png" width="1050" height="645" loading="lazy" decoding="async" alt="Zero-shot transfer curves for nominal and DR policies across parameter shift levels">
+          </figure>
+        </div>
+        <div class="project-body reveal">
+          <div class="project-kicker"><span class="idx">P4</span> Domain randomization</div>
+          <h3 class="title">Does this policy need domain randomization? Measure, do not assume.</h3>
+          <p class="hook">A controlled transfer benchmark over identified-parameter uncertainty: 24 unseen systems per shift level, identical seeded conditions for both policies, an extrapolation region past the training range, and an honest negative result with its mechanism.</p>
+          <div class="metrics">
+            <div class="metric real"><div class="val">-5.6 pts</div><div class="lbl">nominal, full sweep</div></div>
+            <div class="metric real"><div class="val">-8.4 pts</div><div class="lbl">DR tax at w = 0</div></div>
+            <div class="metric"><div class="val">1440</div><div class="lbl">eval episodes / policy</div></div>
+          </div>
+          <div class="tags">
+            <span class="tag">Domain randomization</span><span class="tag">Zero-shot transfer</span><span class="tag">MuJoCo</span>
+            <span class="tag">PPO</span><span class="tag">Python</span>
+          </div>
+          <a class="link-arrow" href="project-4.html">Read the write-up <span>&rarr;</span></a>
+        </div>
+      </div>
+    </article>
+
+    <div class="track-label reveal"><span>Track 2</span> Structural &middot; nonlinear analysis and AI task design in OpenSees</div>
+
+    <!-- Project 5 -->
+    <article class="project">
+      <div class="project-grid">
+        <div class="project-body reveal">
+          <div class="project-kicker"><span class="idx">P5</span> Nonlinear structural analysis</div>
+          <h3 class="title">Pushover of a steel moment frame, before and after an X-brace retrofit</h3>
+          <p class="hook">Fiber sections, distributed plasticity, P-Delta, and displacement-controlled pushover to 4% roof drift in OpenSeesPy. One model change adds the braces, and the comparison is made where it is fair: at equal base-shear demand.</p>
+          <div class="metrics">
+            <div class="metric real"><div class="val">85%</div><div class="lbl">drift cut, equal demand</div></div>
+            <div class="metric real"><div class="val">0.93 &rarr; 0.37 s</div><div class="lbl">fundamental period</div></div>
+            <div class="metric"><div class="val">3.5 &rarr; 7.1</div><div class="lbl">idealized ductility</div></div>
+          </div>
+          <div class="tags">
+            <span class="tag">OpenSeesPy</span><span class="tag">Fiber sections</span><span class="tag">P-Delta</span>
+            <span class="tag">Pushover</span><span class="tag">Python</span>
+          </div>
+          <a class="link-arrow" href="project-5.html">Read the write-up <span>&rarr;</span></a>
+        </div>
+        <div class="project-media reveal">
+          <figure class="figure">
+            <img src="assets/p5-capacity.png" width="1080" height="660" loading="lazy" decoding="async" alt="Pushover capacity curves for the bare and braced frames">
+          </figure>
+        </div>
+      </div>
+    </article>
+
+    <!-- Project 6 -->
+    <article class="project flip">
+      <div class="project-grid">
+        <div class="project-media reveal">
+          <figure class="figure">
+            <img src="assets/p6-scorecard.png" width="1110" height="690" loading="lazy" decoding="async" alt="Scorecard showing all graded fields passing across the three-task pack">
+          </figure>
+        </div>
+        <div class="project-body reveal">
+          <div class="project-kicker"><span class="idx">P6</span> AI task design</div>
+          <h3 class="title">Engineering tasks an AI can be trained and graded on</h3>
+          <p class="hook">Three structural tasks with closed statements, reference solutions, and checkers on independent solution paths: ACI 318-19 flexure, AISC 360-22 buckling, and OpenSees modal analysis, each with a diagnostic trap its tolerances are tuned to catch.</p>
+          <div class="metrics">
+            <div class="metric real"><div class="val">3/3</div><div class="lbl">tasks pass 100/100</div></div>
+            <div class="metric real"><div class="val">2 paths</div><div class="lbl">per golden value</div></div>
+            <div class="metric"><div class="val">3</div><div class="lbl">diagnostic traps</div></div>
+          </div>
+          <div class="tags">
+            <span class="tag">ACI 318</span><span class="tag">AISC 360</span><span class="tag">OpenSeesPy</span>
+            <span class="tag">Golden solutions</span><span class="tag">Python</span>
+          </div>
+          <a class="link-arrow" href="project-6.html">Read the write-up <span>&rarr;</span></a>
+        </div>
+      </div>
+    </article>
   </div>
 </section>
 
@@ -195,6 +303,8 @@
       <div class="cap"><h3>Simulation pipelines</h3><p>Excitation, logging, identification, and out-of-sample validation, wired end to end.</p></div>
       <div class="cap"><h3>ROS2 integration</h3><p>rclpy nodes that run a sim as a joint-state server under live torque commands.</p></div>
       <div class="cap"><h3>Dynamics and control</h3><p>Rigid-body dynamics, contact, gravity compensation, and model-based control.</p></div>
+      <div class="cap"><h3>RL environments</h3><p>Gymnasium environments with defensible observation, action, and reward design, scripted baselines, and honest evaluation.</p></div>
+      <div class="cap"><h3>Verification and task design</h3><p>Nonlinear structural analysis in OpenSees, and machine-gradable tasks with golden solutions checked on independent paths.</p></div>
     </div>
   </div>
 </section>

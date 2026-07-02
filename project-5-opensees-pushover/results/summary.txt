@@ -1,0 +1,9 @@
+Project 5 summary: pushover and braced retrofit
+seismic weight W: 1766 kN
+T1 bare: 0.934 s | T1 braced: 0.367 s
+peak V/W bare: 0.364 | braced: 1.218
+idealized ductility mu bare: 3.5 | braced: 7.1
+peak story drift at V/W=0.25, bare: 0.98% (story 2)
+peak story drift at V/W=0.25, braced: 0.14% (story 2)
+drift reduction at equal demand: 85%
+roof drift reached, bare: 4.00% | braced: 4.01%

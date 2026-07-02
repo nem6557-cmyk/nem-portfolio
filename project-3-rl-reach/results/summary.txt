@@ -1,0 +1,7 @@
+Project 3 summary: reward shaping ablation
+training budget per run: 600000 steps
+final eval success, shaped: 70.0%
+final median hold, shaped: 19.2 mm
+best eval success, shaped: 70.0%
+final eval success, sparse: 0.0%
+final median hold, sparse: 781.6 mm

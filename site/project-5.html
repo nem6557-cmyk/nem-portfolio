@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nonlinear Pushover in OpenSees - Nooruldeen Mustafa</title>
+<meta name="description" content="A fiber-section, P-Delta pushover of a 3-story steel moment frame in OpenSeesPy, before and after an X-brace retrofit, with capacity curves, ductility, and an equal-demand drift comparison.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html" aria-label="Home">
+      <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
+        <line x1="8" y1="12" x2="20" y2="12" stroke="#4FD1C5" stroke-width="2.4" stroke-linecap="round"/>
+        <line x1="20" y1="12" x2="25" y2="22" stroke="#FF8A5B" stroke-width="2.4" stroke-linecap="round"/>
+        <circle cx="8" cy="12" r="3" fill="#0B1220" stroke="#4FD1C5" stroke-width="2.4"/>
+        <circle cx="20" cy="12" r="2.6" fill="#0B1220" stroke="#E8EDF4" stroke-width="2.2"/>
+        <circle cx="25" cy="22" r="2.6" fill="#FF8A5B"/>
+      </svg>
+      Nooruldeen Mustafa
+    </a>
+    <button class="nav-toggle" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5h14M2 9h14M2 13h14"/></svg>
+    </button>
+    <nav class="nav-links">
+      <a href="index.html#projects">projects</a>
+      <a href="index.html#approach">approach</a>
+      <a href="index.html#about">about</a>
+      <a class="gh" href="https://github.com/your-username/robotics-sim-portfolio" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<section class="doc-hero wrap">
+  <a class="back" href="index.html">&larr; All projects</a>
+  <span class="eyebrow real">P5 &middot; Nonlinear structural analysis</span>
+  <h1>Pushover of a steel moment frame, before and after an X-brace retrofit</h1>
+  <p class="lede">A 3-story, 1-bay steel moment-resisting frame in OpenSeesPy: fiber sections with Steel02, distributed plasticity, P-Delta columns, and a displacement-controlled pushover to 4% roof drift. Then one model change, an X-brace retrofit, and the same analysis again. The comparison is made where it is meaningful, at equal base-shear demand.</p>
+  <div class="tags">
+    <span class="tag">OpenSeesPy</span><span class="tag">Fiber sections</span><span class="tag">Steel02</span>
+    <span class="tag">P-Delta</span><span class="tag">Pushover</span><span class="tag">Python</span>
+  </div>
+  <div class="readout-bar">
+    <div class="cell real"><div class="val">85%</div><div class="lbl">DRIFT CUT AT EQUAL DEMAND</div></div>
+    <div class="cell real"><div class="val">0.93 &rarr; 0.37 s</div><div class="lbl">FUNDAMENTAL PERIOD</div></div>
+    <div class="cell"><div class="val">0.36 &rarr; 1.22</div><div class="lbl">PEAK V/W</div></div>
+    <div class="cell"><div class="val">3.5 &rarr; 7.1</div><div class="lbl">IDEALIZED DUCTILITY</div></div>
+  </div>
+</section>
+
+<div class="wrap">
+<div class="doc" id="main">
+
+  <section class="doc-section">
+    <h2>The model</h2>
+    <p>Three stories at 3.5 m, one 6 m bay, plate-built I-sections: 400 mm deep columns and 450 mm deep beams proportioned for a strong-column weak-beam ratio near 3. Members are forceBeamColumn elements with five Gauss-Lobatto integration points and fiber sections using Steel02 at Fy = 345 MPa with 1% kinematic hardening, so yielding spreads through depth and along length instead of being pinned to a hinge location by assumption. Columns carry a P-Delta geometric transformation. Seismic mass is 30 tonnes per node, a total weight of 1766 kN.</p>
+    <figure>
+      <div class="figure"><img src="assets/p5-frame.png" width="1080" height="540" loading="lazy" decoding="async" alt="Schematic of the bare moment frame and the X-braced retrofit under a lateral load pattern"></div>
+      <figcaption>Two lateral systems, one model change. The retrofit adds corotational truss X-braces, 20 cm&sup2; per diagonal, to every story.</figcaption>
+    </figure>
+    <p>One modeling detail earned its own regression check. OpenSees bends 2D fiber sections about the section y axis, so the fibers must be distributed along the local z coordinate to represent depth. Getting that orientation wrong does not crash anything; it silently drops the section stiffness by an order of magnitude and hands back a frame with a 4.4 second period that looks plausible if you are not checking. The model validates its periods against hand-calculated stiffness before any pushover runs.</p>
+  </section>
+
+  <section class="doc-section">
+    <h2>Capacity, and what the retrofit buys</h2>
+    <p>The pushover applies an inverted-triangular load pattern under displacement control with adaptive substepping to 4% roof drift. The bare frame peaks at a base shear of 0.364 W with an idealized bilinear ductility of 3.5. The braced frame is a different structure: 2.5 times stiffer by period ratio, peaking at 1.218 W with ductility 7.1, the diagonals carrying load the moment frame previously took in flexure.</p>
+    <figure>
+      <div class="figure"><img src="assets/p5-capacity.png" width="1080" height="660" loading="lazy" decoding="async" alt="Base shear over weight versus roof drift for the bare and braced frames"></div>
+      <figcaption>Capacity curves. T1 drops from 0.934 s to 0.367 s, peak strength more than triples, and the braced curve keeps climbing where the bare frame has long since softened.</figcaption>
+    </figure>
+    <p>Raw capacity curves invite a misleading comparison, because at equal roof drift the stiffer structure is being pushed far deeper into its response. The honest question is what each frame does under the same load. At a common demand of V/W = 0.25, the bare frame concentrates 0.98% story drift in story 2; the braced frame holds the same story to 0.14%. That is an 85% reduction in the quantity that actually damages buildings, at the demand level both structures can be asked to carry.</p>
+    <figure>
+      <div class="figure"><img src="assets/p5-drift.png" width="690" height="660" loading="lazy" decoding="async" alt="Story drift profiles for both frames at equal base shear demand"></div>
+      <figcaption>Story drift profiles at V/W = 0.25. Same demand, same stories, one system change.</figcaption>
+    </figure>
+    <table class="data">
+      <thead><tr><th>Quantity</th><th class="mono">Bare MRF</th><th class="mono">X-braced</th></tr></thead>
+      <tbody>
+        <tr><td>Fundamental period T1</td><td class="mono">0.934 s</td><td class="mono"><span class="t-real">0.367 s</span></td></tr>
+        <tr><td>Peak base shear V/W</td><td class="mono">0.364</td><td class="mono"><span class="t-real">1.218</span></td></tr>
+        <tr><td>Idealized ductility</td><td class="mono">3.5</td><td class="mono"><span class="t-real">7.1</span></td></tr>
+        <tr><td>Peak story drift at V/W = 0.25</td><td class="mono">0.98% (story 2)</td><td class="mono"><span class="t-real">0.14%</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="doc-section">
+    <h2>Honest scope</h2>
+    <p>This is computational mechanics on a structural benchmark, presented as such. The braces are corotational truss elements with symmetric tension-compression response, so compression-diagonal buckling is out of scope; a design-grade retrofit study would use an inelastic buckling brace model and cyclic loading. The frame is planar, the load pattern is fixed rather than modal-adaptive, and no code checks are claimed. What the project demonstrates is the OpenSees modeling itself: fiber discretization done correctly, distributed plasticity, geometric nonlinearity, a solver that recovers from non-convergence by substepping, and results reduced to the comparison that is actually fair.</p>
+  </section>
+
+  <section class="doc-section">
+    <h2>Run it</h2>
+<pre><code>pip install openseespy numpy matplotlib
+
+python src/run_pushover.py       # both frames, ~1 min
+python src/make_figures.py       # capacity, drift, schematic</code></pre>
+  </section>
+
+  <section class="doc-section">
+    <h2>How it maps to the role</h2>
+    <ul>
+      <li><strong>OpenSees model building.</strong> Fiber sections, forceBeamColumn distributed plasticity, Steel02, P-Delta transformations, corotational truss retrofit, eigen and pushover analyses in one reproducible script.</li>
+      <li><strong>Nonlinear analysis judgment.</strong> Displacement control with adaptive substepping, bilinear idealization for ductility, and a comparison framed at equal demand rather than equal displacement.</li>
+      <li><strong>Verification instinct.</strong> The fiber-axis orientation check exists because the failure mode was found the hard way; the model now refuses to run if its elastic period disagrees with the hand calculation.</li>
+      <li><strong>Honest reporting.</strong> Symmetric-brace scope stated plainly, along with what a design-grade study would add.</li>
+    </ul>
+  </section>
+
+</div>
+</div>
+
+<nav class="wrap next-nav">
+  <a href="project-4.html">&larr; Previous: Domain randomization</a>
+  <a href="project-6.html">Next: AI task pack &rarr;</a>
+</nav>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="colophon">
+      <span>Built as a static site. OpenSeesPy &middot; Python.</span>
+      <span>&copy; <span id="year">2026</span> Nooruldeen Mustafa</span>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>

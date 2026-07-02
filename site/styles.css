@@ -655,3 +655,16 @@ table.data tr:last-child td { border-bottom: none; }
   font-size: 13px; padding: 10px 16px; border-radius: 0 0 8px 0;
 }
 .skip-link:focus { left: 0; }
+
+/* track labels on the index project list */
+.track-label{
+  display:flex;align-items:center;gap:.7rem;
+  margin:3.2rem 0 1.4rem;color:var(--ink-dim,#93a4bd);
+  font-family:"Space Grotesk",sans-serif;font-size:1.02rem;letter-spacing:.01em;
+}
+.track-label span{
+  font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.14em;
+  text-transform:uppercase;color:#4FD1C5;border:1px solid rgba(79,209,197,.35);
+  border-radius:999px;padding:.22rem .6rem;
+}
+.track-label::after{content:"";flex:1;height:1px;background:rgba(147,164,189,.18);}

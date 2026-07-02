@@ -1,0 +1,9 @@
+Project 4 summary: domain randomization transfer
+DR training half-width: 0.3
+eval grid: 24 systems x 12 targets per level
+w=0.00: nominal 66.7%, DR 58.3%
+w=0.15: nominal 67.4%, DR 59.7%
+w=0.30: nominal 66.7%, DR 62.2%
+w=0.45 (extrapolation): nominal 63.9%, DR 62.2%
+w=0.60 (extrapolation): nominal 61.1%, DR 60.4%
+nominal-dynamics eval of DR policy at end of training: 67.5%, median hold 14.9 mm

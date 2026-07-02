@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Machine-Gradable Task Pack - Nooruldeen Mustafa</title>
+<meta name="description" content="Three structural engineering tasks built for AI training and evaluation: closed problem statements, reference solutions, and checkers on independent solution paths, each with a diagnostic trap and a verified 100/100 regression.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html" aria-label="Home">
+      <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
+        <line x1="8" y1="12" x2="20" y2="12" stroke="#4FD1C5" stroke-width="2.4" stroke-linecap="round"/>
+        <line x1="20" y1="12" x2="25" y2="22" stroke="#FF8A5B" stroke-width="2.4" stroke-linecap="round"/>
+        <circle cx="8" cy="12" r="3" fill="#0B1220" stroke="#4FD1C5" stroke-width="2.4"/>
+        <circle cx="20" cy="12" r="2.6" fill="#0B1220" stroke="#E8EDF4" stroke-width="2.2"/>
+        <circle cx="25" cy="22" r="2.6" fill="#FF8A5B"/>
+      </svg>
+      Nooruldeen Mustafa
+    </a>
+    <button class="nav-toggle" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5h14M2 9h14M2 13h14"/></svg>
+    </button>
+    <nav class="nav-links">
+      <a href="index.html#projects">projects</a>
+      <a href="index.html#approach">approach</a>
+      <a href="index.html#about">about</a>
+      <a class="gh" href="https://github.com/your-username/robotics-sim-portfolio" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<section class="doc-hero wrap">
+  <a class="back" href="index.html">&larr; All projects</a>
+  <span class="eyebrow real">P6 &middot; AI task design</span>
+  <h1>Engineering tasks an AI can be trained and graded on</h1>
+  <p class="lede">Three structural analysis tasks packaged the way an AI training pipeline needs them: a closed problem statement, a reference solution, and a checker that grades a JSON deliverable on an independent solution path. Each task embeds a plausible wrong method the tolerances are tuned to catch, and the pack ships with a one-command regression proving every reference scores 100/100 under its own checker.</p>
+  <div class="tags">
+    <span class="tag">ACI 318-19</span><span class="tag">AISC 360-22</span><span class="tag">OpenSeesPy</span>
+    <span class="tag">Golden solutions</span><span class="tag">Independent checkers</span><span class="tag">Python</span>
+  </div>
+  <div class="readout-bar">
+    <div class="cell real"><div class="val">3/3</div><div class="lbl">TASKS PASS 100/100</div></div>
+    <div class="cell real"><div class="val">2 paths</div><div class="lbl">PER GOLDEN VALUE</div></div>
+    <div class="cell"><div class="val">0.5&ndash;1%</div><div class="lbl">FIELD TOLERANCES</div></div>
+    <div class="cell"><div class="val">3</div><div class="lbl">DIAGNOSTIC TRAPS</div></div>
+  </div>
+</section>
+
+<div class="wrap">
+<div class="doc" id="main">
+
+  <section class="doc-section">
+    <h2>What a task is, in this context</h2>
+    <p>A task for AI training or evaluation is not a homework problem. It must be solvable without judgment calls, gradable without a human, and hard to pass by accident. That forces a specific anatomy: every input closed inside the statement, a deliverable that is a JSON file with fixed field names and stated units, and a checker whose golden values come from somewhere other than the reference solution's code path. The checker's exit code makes the whole thing drop into CI or a reinforcement learning reward loop unchanged.</p>
+    <figure>
+      <div class="figure"><img src="assets/p6-anatomy.png" width="1110" height="585" loading="lazy" decoding="async" alt="Diagram of a task: statement feeds both a reference solution and an independent checker, which grades the answer file"></div>
+      <figcaption>A golden value is golden only because two solution paths that share nothing agree on it.</figcaption>
+    </figure>
+  </section>
+
+  <section class="doc-section">
+    <h2>The three tasks</h2>
+    <table class="data">
+      <thead><tr><th>Task</th><th>Graded fields</th><th>The embedded trap</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">T1 &middot; ACI 318-19 beam flexure</td><td class="mono">a, eps_t, phi, phiMn, adequate</td><td>The section is deliberately inadequate. Omitting phi gives Mn = 492.8 &gt; Mu = 460 kN&middot;m and flips the boolean.</td></tr>
+        <tr><td class="mono">T2 &middot; AISC 360-22 column buckling</td><td class="mono">lambda, Fe, Fcr, phiPn, adequate</td><td>Slenderness 53.8 is inelastic. Applying the elastic branch anyway gives Fcr = 597 MPa against the correct 279, a 2.1x error.</td></tr>
+        <tr><td class="mono">T3 &middot; OpenSees modal analysis</td><td class="mono">T1_s, T2_s, phi_ratio</td><td>Mixing kN/m with kg moves both periods by 31.6x; taking eigenvalues in solver order swaps the modes.</td></tr>
+      </tbody>
+    </table>
+    <p>T3 makes the independence principle concrete: the reference solution builds a two-story shear building in OpenSeesPy and runs an eigen analysis; the checker solves the 2x2 generalized eigenproblem in closed form with numpy and never imports OpenSees. Its goldens are T1 = 0.3033 s, T2 = 0.1227 s, and a fundamental mode shape ratio of 1.912, and both paths agree to well inside the 0.5% band.</p>
+    <figure>
+      <div class="figure"><img src="assets/p6-scorecard.png" width="1110" height="690" loading="lazy" decoding="async" alt="Scorecard showing every graded field passing for all three tasks with each task's trap annotated"></div>
+      <figcaption>The pack regression, drawn from the real grading pipeline. Every field, every task, with the trap each checker is tuned to catch.</figcaption>
+    </figure>
+  </section>
+
+  <section class="doc-section">
+    <h2>Tolerances and traps are the design work</h2>
+    <p>Every tolerance in the pack passes the same test: at least one known-wrong method must fall outside it, and every defensible correct method must fall inside it. Code-equation quantities get 1%, loose enough for rounding-step differences between correct solutions. Modal results get 0.5%, because eigensolvers agree far tighter than hand methods. Booleans are exact, because a capacity check is a decision and there is no almost adequate.</p>
+    <div class="callout">
+      <span class="tag-lbl">Why traps, not trick questions</span>
+      <p>Each trap is a real misconception with a distinctive numeric signature, so a failed field localizes what the solver got wrong instead of just failing it. That is what makes these usable as reward signals for training, not only as pass-fail walls for evaluation. Partial credit sits on intermediate quantities in solution order for the same reason.</p>
+    </div>
+  </section>
+
+  <section class="doc-section">
+    <h2>Honest scope</h2>
+    <p>I am a mechanical engineer working these problems as computational mechanics against published code equations, not a licensed structural engineer, and the tasks are framed accordingly: closed numerical problems with machine-verifiable answers, not design sign-off. The pack's full design rationale, including the anti-pattern list it was built against, is in DESIGN_NOTES.md in the repository.</p>
+  </section>
+
+  <section class="doc-section">
+    <h2>Run it</h2>
+<pre><code>pip install openseespy numpy
+
+python grade_all.py     # runs every reference through its checker
+                        # exit 0 iff the whole pack scores 100/100</code></pre>
+  </section>
+
+  <section class="doc-section">
+    <h2>How it maps to the role</h2>
+    <ul>
+      <li><strong>Author tasks with verified golden solutions.</strong> Three complete tasks, each with statement, reference, checker, and a regression proving the loop closes at 100/100.</li>
+      <li><strong>Independent verification.</strong> Checkers recompute from first principles or a different engine entirely; nothing grades itself.</li>
+      <li><strong>Code-based structural analysis.</strong> ACI 318-19 flexure with the phi transition, AISC 360-22 buckling branch logic, and OpenSees modal analysis, each reduced to exact machine-checkable quantities.</li>
+      <li><strong>Evaluation design sense.</strong> Tolerances with stated rationale, traps that diagnose specific misconceptions, and partial credit that mirrors the solution dependency graph.</li>
+    </ul>
+  </section>
+
+</div>
+</div>
+
+<nav class="wrap next-nav">
+  <a href="project-5.html">&larr; Previous: Nonlinear pushover</a>
+  <a href="index.html">All projects &rarr;</a>
+</nav>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="colophon">
+      <span>Built as a static site. OpenSeesPy &middot; Python.</span>
+      <span>&copy; <span id="year">2026</span> Nooruldeen Mustafa</span>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>
