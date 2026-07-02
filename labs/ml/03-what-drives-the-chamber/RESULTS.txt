@@ -1,0 +1,1 @@
+ML-3 drivers, RF on 261 real points: shuffled 5-fold CV R2 0.930 +/- 0.013; leave-one-configuration-out R2 -0.10 +/- 0.45 (interpolation is easy, extrapolating to an unseen configuration is not); permutation importance heat flux q'': 1.152, coolant setpoint: 0.546, condenser gen: 0.389, surface type: 0.173. Dominant driver: heat flux q''. Association, not causation.

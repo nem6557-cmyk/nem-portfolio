@@ -1,0 +1,1 @@
+ML-1 GP surrogate, 5-fold CV on 261 real points: RMSE 1.46 K, MAE 0.87 K, R2 0.993; 95% interval empirical coverage 92.7%. Gray-box physics model reference: 4.34 K RMSE (in-sample).

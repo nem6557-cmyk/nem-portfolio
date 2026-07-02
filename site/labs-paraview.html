@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0B1220">
+<title>Visualization Bench - Nooruldeen Mustafa</title>
+<meta name="description" content="Three scientific-visualization labs on real data through the VTK pipeline: the 33-tube manifold bullseye, a two-generation comparison on matched scales, and structural mode shapes.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html" aria-label="Home">
+      <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
+        <line x1="8" y1="12" x2="20" y2="12" stroke="#4FD1C5" stroke-width="2.4" stroke-linecap="round"/>
+        <line x1="20" y1="12" x2="25" y2="22" stroke="#FF8A5B" stroke-width="2.4" stroke-linecap="round"/>
+        <circle cx="8" cy="12" r="3" fill="#0B1220" stroke="#4FD1C5" stroke-width="2.4"/>
+        <circle cx="20" cy="12" r="2.6" fill="#0B1220" stroke="#E8EDF4" stroke-width="2.2"/>
+        <circle cx="25" cy="22" r="2.6" fill="#FF8A5B"/>
+      </svg>
+      Nooruldeen Mustafa
+    </a>
+    <button class="nav-toggle" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5h14M2 9h14M2 13h14"/></svg>
+    </button>
+    <nav class="nav-links">
+      <a href="research.html">research</a>
+      <a href="index.html#projects">projects</a>
+      <a href="labs.html">labs</a>
+      <a href="software.html">software</a>
+      <a href="index.html#about">about</a>
+      <a class="gh" href="https://github.com/nem6557-cmyk/nem-portfolio" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<section class="doc-hero wrap">
+  <a class="back" href="labs.html">&larr; All labs</a>
+  <span class="eyebrow real">Labs &middot; ParaView / VTK</span>
+  <h1>Visualization: making the numbers visible</h1>
+  <p class="lede">The dissertation's CoV numbers live in tables; these labs make them visible. All three render headlessly through the VTK pipeline that ParaView is built on, from the actual converged solver fields, and each ships a pvpython twin where it applies. A figure here is a claim, so the data is real or the lab does not ship.</p>
+  <div class="tags"><span class="tag">VTK / PyVista</span><span class="tag">pvpython</span><span class="tag">Streamlines</span><span class="tag">Mode shapes</span><span class="tag">Real CFD fields</span></div>
+  <div class="readout-bar"><div class="cell real"><div class="val">389,517</div><div class="lbl">CELLS, 33-TUBE FIELD</div></div><div class="cell real"><div class="val">1.71M</div><div class="lbl">CELLS COMPARED IN PV-2</div></div><div class="cell"><div class="val">0.934 s</div><div class="lbl">T1, MATCHES PROJECT 5</div></div><div class="cell"><div class="val">3</div><div class="lbl">MODES RENDERED LIVE</div></div></div>
+</section>
+
+<div class="wrap">
+<div class="doc" id="main">
+
+  <section class="doc-section">
+    <h2>PV-1 &middot; Anatomy of a bad manifold</h2>
+    <p>The 33-tube condenser's flow CoV measured 131% in the research CFD, and this render shows what that number looks like: streamlines seeded from the actual inlet patch dive straight through the bundle center as a jet while the flanks sit stagnant, and the mid-plane speed slice confirms a single hot column. The 389,517-cell converged field is the real one from the dissertation package.</p>
+    <figure><div class="figure"><img src="assets/pv1-manifold-anatomy.png" width="1500" height="1650" loading="lazy" decoding="async" alt="Streamlines and speed slice through the 33-tube manifold showing the central jet"></div><figcaption>The bullseye, visible: a single centred port overfeeds the middle tubes while the edges starve.</figcaption></figure>
+    <div class="callout"><span class="tag-lbl">Verified output</span>
+    <p class="mono" style="font-size:13px">389,517 cells; inlet-patch seeded streamlines; peak interpolated speed 4.18 m/s</p></div>
+    <p><a class="link-arrow" href="https://github.com/nem6557-cmyk/nem-portfolio/tree/main/labs/paraview/01-manifold-anatomy" target="_blank" rel="noopener">Code and run log <span>&rarr;</span></a></p>
+  </section>
+  <section class="doc-section">
+    <h2>PV-2 &middot; Two generations, matched scales</h2>
+    <p>The craft lab: 42-tube and 66-tube manifold fields, 1.71 million cells combined, rendered as mid-plane speed and pressure slices with matched cameras and matched color ranges per row, so the eye compares physics instead of colormap artifacts. The 42-tube's even feed and the 66-tube's simplified centreline jet read instantly, caveat included.</p>
+    <figure><div class="figure"><img src="assets/pv2-generation-compare.png" width="1760" height="920" loading="lazy" decoding="async" alt="Four-panel comparison of speed and pressure slices for the 42 and 66 tube manifolds"></div><figcaption>Matched scales per row. The 66-tube panel inherits the simplified-inlet caveat from the research CFD page; the comparison is about rendering discipline as much as flow.</figcaption></figure>
+    <div class="callout"><span class="tag-lbl">Verified output</span>
+    <p class="mono" style="font-size:13px">42-tube: 769,447 cells, speed max 4.28 m/s; 66-tube: 944,081 cells, speed max 3.98 m/s; shared clim per row</p></div>
+    <p><a class="link-arrow" href="https://github.com/nem6557-cmyk/nem-portfolio/tree/main/labs/paraview/02-generation-compare" target="_blank" rel="noopener">Code and run log <span>&rarr;</span></a></p>
+  </section>
+  <section class="doc-section">
+    <h2>PV-3 &middot; Mode shapes as a vis problem</h2>
+    <p>Project 5's three-story frame rebuilt in OpenSees, eigensolved live, and its first three lateral modes rendered as warped, displacement-colored tubes over the ghosted undeformed frame. The first period lands at 0.934 seconds, identical to project 5's reported value because it is the same model solved again, and modes two and three come out at 0.260 and 0.132 seconds.</p>
+    <figure><div class="figure"><img src="assets/pv3-structural-modes.png" width="1740" height="760" loading="lazy" decoding="async" alt="Three warped mode shapes of the steel frame colored by displacement"></div><figcaption>Classic shear-frame signatures: monotonic sway, S-reversal, double zigzag. The eigensolve runs inside the lab script.</figcaption></figure>
+    <div class="callout"><span class="tag-lbl">Verified output</span>
+    <p class="mono" style="font-size:13px">T1 = 0.934 s (matches project 5), T2 = 0.260 s, T3 = 0.132 s; unbraced frame, live eigensolve</p></div>
+    <p><a class="link-arrow" href="https://github.com/nem6557-cmyk/nem-portfolio/tree/main/labs/paraview/03-structural-modes" target="_blank" rel="noopener">Code and run log <span>&rarr;</span></a></p>
+  </section>
+</div>
+</div>
+
+<nav class="wrap next-nav">
+  <a href="labs-ngspice.html">&larr; Circuits</a>
+  <a href="labs-ml.html">Next: Machine learning &rarr;</a>
+</nav>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="colophon">
+      <span>Rendered headless via VTK; pvpython twins included for ParaView proper.</span>
+      <span>&copy; <span id="year">2026</span> Nooruldeen Mustafa</span>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>

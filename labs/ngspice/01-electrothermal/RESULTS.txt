@@ -1,0 +1,5 @@
+NG-1 electro-thermal analogy: results
+transient max |SPICE - RK4|: winding 4.53 mK, case 0.05 mK
+continuous rating from SPICE DC sweep: 2.765 N m
+continuous rating, closed form:        2.765 N m
+agreement: 0.000%

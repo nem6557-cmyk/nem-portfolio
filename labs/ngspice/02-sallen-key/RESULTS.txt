@@ -1,0 +1,1 @@
+NG-2 Sallen-Key: nominal fc 1000.3 Hz (design 1000.4), rolloff -40.0 dB/dec, MC yield inside +/-10%: 99.3%, MC fc mean 1008 Hz, sigma 35 Hz

@@ -1,0 +1,1 @@
+PV-3 eigensolve (unbraced frame): T1=0.934s, T2=0.260s, T3=0.132s; mode-1 period matches project 5's reported T1 = 0.934 s by construction (same model).

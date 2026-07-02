@@ -1,0 +1,17 @@
+* async buck 12V -> 5V, 100 kHz
+Vin  vin 0 DC 12.0
+S1   vin sw ctrl 0 SWMOD
+D1   0 sw DPWR
+L1   sw out 0.0001
+C1   out cesr 0.0001 ic=0
+Resr cesr 0 0.03
+Rload out 0 2.5
+Vctl ctrl 0 PULSE(0 5 0 10n 10n 4.166667e-06 1.000000e-05)
+.model SWMOD SW(Ron=0.02 Roff=1e6 Vt=2.5 Vh=0.2)
+.model DPWR D(Is=1e-9 Rs=0.01 N=1.05)
+.tran 100n 25m 0 200n uic
+.control
+run
+wrdata /home/claude/portfolio/robotics/robotics-sim-portfolio/labs/ngspice/03-buck/buck.dat v(out) i(L1)
+.endc
+.end

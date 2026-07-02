@@ -1,0 +1,1 @@
+FUN-1 salah solar geometry, July 2 2026, Rochester NY (ISNA): fajr 03:47, sunrise 05:35, dhuhr 13:14, asr 17:19, maghrib 20:54, isha 22:41. Self-checks: Dhuhr equals equation-of-time solar noon exactly; independent altitude at computed Maghrib = -0.833 deg vs -0.833 target. DST step visible at day 67 and 305 in the chart.

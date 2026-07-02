@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0B1220">
+<title>Machine Learning Bench - Nooruldeen Mustafa</title>
+<meta name="description" content="Three ML labs with honest evaluation: a GP surrogate cross-validated on 261 real chamber points, a PINN benchmarked against Crank-Nicolson, and a CV-pitfall study on what drives chip temperature.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html" aria-label="Home">
+      <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
+        <line x1="8" y1="12" x2="20" y2="12" stroke="#4FD1C5" stroke-width="2.4" stroke-linecap="round"/>
+        <line x1="20" y1="12" x2="25" y2="22" stroke="#FF8A5B" stroke-width="2.4" stroke-linecap="round"/>
+        <circle cx="8" cy="12" r="3" fill="#0B1220" stroke="#4FD1C5" stroke-width="2.4"/>
+        <circle cx="20" cy="12" r="2.6" fill="#0B1220" stroke="#E8EDF4" stroke-width="2.2"/>
+        <circle cx="25" cy="22" r="2.6" fill="#FF8A5B"/>
+      </svg>
+      Nooruldeen Mustafa
+    </a>
+    <button class="nav-toggle" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5h14M2 9h14M2 13h14"/></svg>
+    </button>
+    <nav class="nav-links">
+      <a href="research.html">research</a>
+      <a href="index.html#projects">projects</a>
+      <a href="labs.html">labs</a>
+      <a href="software.html">software</a>
+      <a href="index.html#about">about</a>
+      <a class="gh" href="https://github.com/nem6557-cmyk/nem-portfolio" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<section class="doc-hero wrap">
+  <a class="back" href="labs.html">&larr; All labs</a>
+  <span class="eyebrow real">Labs &middot; Machine learning</span>
+  <h1>ML that shows its validation</h1>
+  <p class="lede">Three studies on the theme this whole site keeps returning to: a model is worth exactly its evaluation. Two of the three run on the real 261-point experimental dataset from the boiling chamber; the third pits a PINN against sixty-year-old numerics and reports who won.</p>
+  <div class="tags"><span class="tag">Gaussian processes</span><span class="tag">PINN / PyTorch</span><span class="tag">Cross-validation</span><span class="tag">Real research data</span></div>
+  <div class="readout-bar"><div class="cell real"><div class="val">1.46 K</div><div class="lbl">GP CV RMSE, 261 POINTS</div></div><div class="cell"><div class="val">92.7%</div><div class="lbl">95% INTERVAL COVERAGE</div></div><div class="cell real"><div class="val">360&times;</div><div class="lbl">CN BEATS PINN ON ERROR</div></div><div class="cell"><div class="val">&minus;0.10</div><div class="lbl">LEAVE-CONFIG-OUT R&sup2;</div></div></div>
+</section>
+
+<div class="wrap">
+<div class="doc" id="main">
+
+  <section class="doc-section">
+    <h2>ML-1 &middot; A surrogate with calibrated doubt</h2>
+    <p>A Gaussian process trained on the real 261-point dataset, heat flux, coolant setpoint, condenser generation, surface type, predicting chip temperature, and evaluated entirely out-of-fold: 5-fold CV RMSE of 1.46 K with R-squared 0.993. That beats the gray-box physics model's 4.34 K, and the page says why that comparison is unfair in both directions: the GP interpolates a fixed apparatus brilliantly and extrapolates nowhere, while the physics model explains and transfers. The second panel asks whether the GP's error bars mean anything: a claimed 95% interval covers 92.7% empirically, slightly overconfident and reported as such.</p>
+    <figure><div class="figure"><img src="assets/ml1-gp-surrogate.png" width="1560" height="660" loading="lazy" decoding="async" alt="GP parity plot with uncertainty bars and the calibration curve"></div><figcaption>Out-of-fold parity with 95% bars, and the calibration curve that grades the bars themselves.</figcaption></figure>
+    <div class="callout"><span class="tag-lbl">Verified output</span>
+    <p class="mono" style="font-size:13px">5-fold CV: RMSE 1.46 K, MAE 0.87 K, R2 0.993; empirical coverage of 95% intervals: 92.7%</p></div>
+    <p><a class="link-arrow" href="https://github.com/nem6557-cmyk/nem-portfolio/tree/main/labs/ml/01-gp-surrogate" target="_blank" rel="noopener">Code and run log <span>&rarr;</span></a></p>
+  </section>
+  <section class="doc-section">
+    <h2>ML-2 &middot; The PINN loses, and that is the result</h2>
+    <p>One-dimensional transient conduction with the effective diffusivity tuned in the cardiac bioheat validation, solved three ways: exact Fourier series, Crank-Nicolson, and a physics-informed neural network trained on the PDE residual with hard-encoded boundary conditions. The verdict is unambiguous: CN reaches 2.4e-5 max error in 0.1 seconds; the PINN reaches 8.6e-3 after 77 seconds of training. For a clean forward problem on a rectangle, classical numerics wins by more than two orders of magnitude, and the lab says so, because PINNs earn their keep on inverse problems and irregular domains, not here.</p>
+    <figure><div class="figure"><img src="assets/ml2-pinn.png" width="1560" height="630" loading="lazy" decoding="async" alt="Temperature profiles from exact, PINN, and Crank-Nicolson solvers with an error comparison"></div><figcaption>All three solvers overlaid at three snapshots, and the error bars that settle the contest.</figcaption></figure>
+    <div class="callout"><span class="tag-lbl">Verified output</span>
+    <p class="mono" style="font-size:13px">PINN worst max-error 8.6e-3 (77 s train, CPU); Crank-Nicolson 2.4e-5 (0.1 s); alpha = 1.447e-7 m2/s from the bioheat validation</p></div>
+    <p><a class="link-arrow" href="https://github.com/nem6557-cmyk/nem-portfolio/tree/main/labs/ml/02-pinn-conduction" target="_blank" rel="noopener">Code and run log <span>&rarr;</span></a></p>
+  </section>
+  <section class="doc-section">
+    <h2>ML-3 &middot; What drives the chamber, and a CV trap</h2>
+    <p>A random forest on the same 261 points, interrogated with permutation importance and partial dependence: heat flux dominates, coolant setpoint second, condenser generation third, surface type fourth, exactly the physics ordering. The kept-in lesson: the first run used unshuffled folds on a configuration-ordered CSV and scored R-squared of zero. The final lab reports both numbers on purpose: shuffled CV 0.930 for interpolation, leave-one-configuration-out negative 0.10 for extrapolation. Interpolation is easy; a new configuration is not, which is precisely why the physics model exists.</p>
+    <figure><div class="figure"><img src="assets/ml3-drivers.png" width="1890" height="600" loading="lazy" decoding="async" alt="Permutation importance and partial dependence plots for the chamber dataset"></div><figcaption>The forest agrees with the physics on ordering, and the two CV numbers frame what data-driven models can and cannot do here.</figcaption></figure>
+    <div class="callout"><span class="tag-lbl">Verified output</span>
+    <p class="mono" style="font-size:13px">shuffled 5-fold R2 0.930 +/- 0.013; leave-config-out R2 -0.10 +/- 0.45; importance: q'' 1.15, coolant 0.55, generation 0.39, surface 0.17</p></div>
+    <p><a class="link-arrow" href="https://github.com/nem6557-cmyk/nem-portfolio/tree/main/labs/ml/03-what-drives-the-chamber" target="_blank" rel="noopener">Code and run log <span>&rarr;</span></a></p>
+  </section>
+</div>
+</div>
+
+<nav class="wrap next-nav">
+  <a href="labs-paraview.html">&larr; Visualization</a>
+  <a href="labs-ai-eval.html">Next: AI evaluation &rarr;</a>
+</nav>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="colophon">
+      <span>Datasets: research/chamber-model (real); all metrics out-of-fold where stated.</span>
+      <span>&copy; <span id="year">2026</span> Nooruldeen Mustafa</span>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>

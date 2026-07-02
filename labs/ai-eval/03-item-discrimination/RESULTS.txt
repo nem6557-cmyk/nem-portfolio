@@ -1,0 +1,1 @@
+AE-3 item analysis (simulated population, N=600, stated error model): difficulty range 0.13 to 0.38; most discriminating field T3:drift (r_pb = 0.61). Structural finding: error propagation makes chain heads the highest-information items, while terminal fields are hardest but partially redundant.

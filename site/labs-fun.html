@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0B1220">
+<title>Side Quests - Nooruldeen Mustafa</title>
+<meta name="description" content="Three curiosity builds held to the same standard: prayer times from solar geometry self-checked to the arcminute, a double pendulum with measured chaos, and generative art from a physically honest plume field.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html" aria-label="Home">
+      <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
+        <line x1="8" y1="12" x2="20" y2="12" stroke="#4FD1C5" stroke-width="2.4" stroke-linecap="round"/>
+        <line x1="20" y1="12" x2="25" y2="22" stroke="#FF8A5B" stroke-width="2.4" stroke-linecap="round"/>
+        <circle cx="8" cy="12" r="3" fill="#0B1220" stroke="#4FD1C5" stroke-width="2.4"/>
+        <circle cx="20" cy="12" r="2.6" fill="#0B1220" stroke="#E8EDF4" stroke-width="2.2"/>
+        <circle cx="25" cy="22" r="2.6" fill="#FF8A5B"/>
+      </svg>
+      Nooruldeen Mustafa
+    </a>
+    <button class="nav-toggle" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5h14M2 9h14M2 13h14"/></svg>
+    </button>
+    <nav class="nav-links">
+      <a href="research.html">research</a>
+      <a href="index.html#projects">projects</a>
+      <a href="labs.html">labs</a>
+      <a href="software.html">software</a>
+      <a href="index.html#about">about</a>
+      <a class="gh" href="https://github.com/nem6557-cmyk/nem-portfolio" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<section class="doc-hero wrap">
+  <a class="back" href="labs.html">&larr; All labs</a>
+  <span class="eyebrow real">Labs &middot; Side quests</span>
+  <h1>Curiosity, same standards</h1>
+  <p class="lede">No client, no deadline, no citation, and the same rule anyway: every number verified, every claim checked. Three builds that exist because the questions would not leave me alone.</p>
+  <div class="tags"><span class="tag">Solar geometry</span><span class="tag">Chaos</span><span class="tag">Generative art</span><span class="tag">NumPy</span></div>
+  <div class="readout-bar"><div class="cell real"><div class="val">&minus;0.833&deg;</div><div class="lbl">MAGHRIB ALTITUDE CHECK</div></div><div class="cell real"><div class="val">1.20 /s</div><div class="lbl">LYAPUNOV EXPONENT</div></div><div class="cell"><div class="val">1.75e-7</div><div class="lbl">ENERGY DRIFT, 40 s RK4</div></div><div class="cell"><div class="val">30k</div><div class="lbl">PARTICLES PER PIECE</div></div></div>
+</section>
+
+<div class="wrap">
+<div class="doc" id="main">
+
+  <section class="doc-section">
+    <h2>FUN-1 &middot; Salah times from the sky</h2>
+    <p>Prayer times are astronomy: Dhuhr is solar transit, Asr is a shadow ratio, Maghrib is sunset, Fajr and Isha are solar depression angles. This lab computes all five for Rochester from NOAA's solar position equations under the ISNA convention, and self-validates two ways: computed Dhuhr equals the equation-of-time solar noon identically, and an independent altitude evaluation at the computed Maghrib returns exactly the minus 0.833 degree refraction-corrected horizon. For July 2, 2026 it gives Maghrib at 20:54, which matches the published Rochester sunset to the minute. The year chart shows the seasons breathing, daylight-saving steps included.</p>
+    <figure><div class="figure"><img src="assets/f1-salah.png" width="1380" height="750" loading="lazy" decoding="async" alt="All five prayer times across the year 2026 for Rochester with dawn and dusk bands shaded"></div><figcaption>A year of Rochester's sky under the ISNA 15/15 convention. The vertical steps are daylight saving, not astronomy.</figcaption></figure>
+    <div class="callout"><span class="tag-lbl">Verified output</span>
+    <p class="mono" style="font-size:13px">Jul 2 2026: fajr 03:47, sunrise 05:35, dhuhr 13:14, asr 17:19, maghrib 20:54, isha 22:41; both self-checks exact</p></div>
+    <p><a class="link-arrow" href="https://github.com/nem6557-cmyk/nem-portfolio/tree/main/labs/fun/01-salah-solar" target="_blank" rel="noopener">Code and run log <span>&rarr;</span></a></p>
+  </section>
+  <section class="doc-section">
+    <h2>FUN-2 &middot; Chaos, measured</h2>
+    <p>The double pendulum everyone has seen, plus the numbers most demos skip. A Benettin twin-trajectory measurement over 80 renormalizations puts the largest Lyapunov exponent at 1.20 per second, a 0.58 second doubling time for any uncertainty, which is why two starts one nanoradian apart disagree completely within eleven seconds. A vectorized RK4 sweep of 14,641 initial conditions maps time-to-first-flip across the angle plane, and the integrator earns trust the boring way: measured relative energy drift of 1.75e-7 over the 40 second reference run.</p>
+    <figure><div class="figure"><img src="assets/f2-pendulum.png" width="1710" height="690" loading="lazy" decoding="async" alt="Twin-trajectory divergence with exponential fit and the fractal flip-time map"></div><figcaption>Left: one nanoradian becoming everything. Right: which initial angles somersault, and how soon; the interleaved structure is the chaos.</figcaption></figure>
+    <div class="callout"><span class="tag-lbl">Verified output</span>
+    <p class="mono" style="font-size:13px">lambda = 1.20 /s (doubling 0.58 s); 76% of the 121x121 grid flips within 25 s; energy drift 1.75e-7 relative</p></div>
+    <p><a class="link-arrow" href="https://github.com/nem6557-cmyk/nem-portfolio/tree/main/labs/fun/02-double-pendulum" target="_blank" rel="noopener">Code and run log <span>&rarr;</span></a></p>
+  </section>
+  <section class="doc-section">
+    <h2>FUN-3 &middot; Plume art</h2>
+    <p>Generative art with a defensible velocity field: three buoyant plumes, Gaussian updraft cores with entrainment inflow at their flanks, superposed with a divergence-free curl-noise background. Thirty thousand particles advect through it for 340 steps, their trails accumulating on the canvas and colored from deep teal in the cold far field to orange in the rising cores. Two seeds, two pieces. It is art, but the field would pass a code review, which felt like the only acceptable way for this site to make art.</p>
+    <figure><div class="figure"><img src="assets/f3-plume-art.png" width="1920" height="770" loading="lazy" decoding="async" alt="Two generative art pieces of particle trails through thermal plume fields"></div><figcaption>rise i and rise ii: same code, different seeds. The physics is decorative and correct.</figcaption></figure>
+    <div class="callout"><span class="tag-lbl">Verified output</span>
+    <p class="mono" style="font-size:13px">30,000 particles, 340 advection steps, three plumes + curl noise; seeds 12 and 47</p></div>
+    <p><a class="link-arrow" href="https://github.com/nem6557-cmyk/nem-portfolio/tree/main/labs/fun/03-plume-art" target="_blank" rel="noopener">Code and run log <span>&rarr;</span></a></p>
+  </section>
+</div>
+</div>
+
+<nav class="wrap next-nav">
+  <a href="labs-ai-eval.html">&larr; AI evaluation</a>
+  <a href="software.html">Next: Software &rarr;</a>
+</nav>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="colophon">
+      <span>labs/fun in the repository; every figure regenerable.</span>
+      <span>&copy; <span id="year">2026</span> Nooruldeen Mustafa</span>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>

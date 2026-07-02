@@ -1,0 +1,1 @@
+NG-3 buck: settled mean Vout 4.641 V (async diode drop accounts for the offset from 5.0 V), output ripple 9.17 mVpp vs two-term prediction 13.12 mVpp, inductor ripple 0.306 A vs 0.309 A predicted. First-cut lesson kept in the docstring: a 3 ms window measured the startup transient, not the ripple.

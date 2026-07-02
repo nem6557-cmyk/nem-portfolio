@@ -1,0 +1,1 @@
+AE-1 mutation testing across 3 checkers: 79/79 mutants caught (sensitivity 100.0%); 117/120 benign in-tolerance variants passed (specificity 97.5%). Every unit slip, sign flip, type corruption, missing field, and boolean flip was caught; the only surviving mutants by design would be errors inside the 1% band.

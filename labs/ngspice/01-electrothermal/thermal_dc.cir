@@ -1,0 +1,10 @@
+* steady-state winding rise vs dissipated power
+Ipow 0 tw DC 1
+Rwc  tw tc 1.0
+Rca  tc 0  1.5
+.dc Ipow 1 130 0.25
+.control
+run
+wrdata /home/claude/portfolio/robotics/robotics-sim-portfolio/labs/ngspice/01-electrothermal/dc.dat v(tw)
+.endc
+.end

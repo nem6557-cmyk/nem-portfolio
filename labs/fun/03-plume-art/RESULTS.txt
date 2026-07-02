@@ -1,0 +1,1 @@
+FUN-3 plume art: 30k particles, 340 advection steps through three buoyant plumes + curl noise; two seeds rendered (12, 47).

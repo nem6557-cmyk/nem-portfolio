@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0B1220">
+<title>ngspice Bench - Nooruldeen Mustafa</title>
+<meta name="description" content="Three verified circuit-simulation labs: an electro-thermal analogy cross-checked to millikelvins, a Sallen-Key Monte Carlo yield study, and a buck converter with its measurement lesson kept in.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html" aria-label="Home">
+      <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
+        <line x1="8" y1="12" x2="20" y2="12" stroke="#4FD1C5" stroke-width="2.4" stroke-linecap="round"/>
+        <line x1="20" y1="12" x2="25" y2="22" stroke="#FF8A5B" stroke-width="2.4" stroke-linecap="round"/>
+        <circle cx="8" cy="12" r="3" fill="#0B1220" stroke="#4FD1C5" stroke-width="2.4"/>
+        <circle cx="20" cy="12" r="2.6" fill="#0B1220" stroke="#E8EDF4" stroke-width="2.2"/>
+        <circle cx="25" cy="22" r="2.6" fill="#FF8A5B"/>
+      </svg>
+      Nooruldeen Mustafa
+    </a>
+    <button class="nav-toggle" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5h14M2 9h14M2 13h14"/></svg>
+    </button>
+    <nav class="nav-links">
+      <a href="research.html">research</a>
+      <a href="index.html#projects">projects</a>
+      <a href="labs.html">labs</a>
+      <a href="software.html">software</a>
+      <a href="index.html#about">about</a>
+      <a class="gh" href="https://github.com/nem6557-cmyk/nem-portfolio" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<section class="doc-hero wrap">
+  <a class="back" href="labs.html">&larr; All labs</a>
+  <span class="eyebrow real">Labs &middot; Circuit simulation</span>
+  <h1>ngspice: three circuits, three cross-checks</h1>
+  <p class="lede">Circuit simulation with the same discipline as the research: every lab pairs the simulator against an independent reference, an analytic result, another solver, or a design equation, and reports the gap.</p>
+  <div class="tags"><span class="tag">ngspice 42</span><span class="tag">Electro-thermal analogy</span><span class="tag">Monte Carlo</span><span class="tag">Power electronics</span></div>
+  <div class="readout-bar"><div class="cell real"><div class="val">4.5 mK</div><div class="lbl">SPICE VS RK4, MAX GAP</div></div><div class="cell real"><div class="val">0.000%</div><div class="lbl">RATING VS CLOSED FORM</div></div><div class="cell"><div class="val">99.3%</div><div class="lbl">MC YIELD, 300 BUILDS</div></div><div class="cell"><div class="val">1%</div><div class="lbl">RIPPLE VS PREDICTION GAP</div></div></div>
+</section>
+
+<div class="wrap">
+<div class="doc" id="main">
+
+  <section class="doc-section">
+    <h2>NG-1 &middot; The motor's thermal circuit</h2>
+    <p>The electro-thermal analogy makes project 2's two-node motor network a two-RC circuit: temperature is voltage, heat flow is current, ngspice is the thermal solver. Two cross-checks anchor it. On a 300-second open-loop transient, SPICE and the project's RK4 integrator agree to 4.5 millikelvin on the winding and 0.05 on the case. And a DC sweep of dissipated power recovers the continuous torque rating at 2.765 N m, matching the closed-form value to the last digit.</p>
+    <figure><div class="figure"><img src="assets/ng1-transient.png" width="1110" height="630" loading="lazy" decoding="async" alt="Winding and case temperatures from ngspice overlaid on the Python RK4 solution"></div><figcaption>Two solvers, one network. The dashed SPICE traces sit on the RK4 curves; the derating threshold from project 2 is marked.</figcaption></figure>
+    <div class="callout"><span class="tag-lbl">Verified output</span>
+    <p class="mono" style="font-size:13px">transient max |SPICE - RK4|: winding 4.53 mK, case 0.05 mK; continuous rating 2.765 N m from the DC sweep vs 2.765 closed form (0.000%)</p></div>
+    <p><a class="link-arrow" href="https://github.com/nem6557-cmyk/nem-portfolio/tree/main/labs/ngspice/01-electrothermal" target="_blank" rel="noopener">Code and run log <span>&rarr;</span></a></p>
+  </section>
+  <section class="doc-section">
+    <h2>NG-2 &middot; A filter and its factory yield</h2>
+    <p>A unity-gain Sallen-Key Butterworth low-pass designed for 1 kHz: the nominal AC sweep lands the cutoff at 1000.3 Hz against a 1000.4 Hz design value with a clean minus 40 dB per decade rolloff. Then the engineering question: with 5% resistors and 10% capacitors, 300 Monte Carlo builds put 99.3% of units inside a plus or minus 10% cutoff window, with a 35 Hz standard deviation.</p>
+    <figure><div class="figure"><img src="assets/ng2-sallenkey.png" width="1530" height="600" loading="lazy" decoding="async" alt="Bode magnitude of the Sallen-Key filter and Monte Carlo histogram of cutoff frequencies"></div><figcaption>Left: the nominal response with cutoff and slope annotated. Right: where 300 toleranced builds actually land.</figcaption></figure>
+    <div class="callout"><span class="tag-lbl">Verified output</span>
+    <p class="mono" style="font-size:13px">nominal fc 1000.3 Hz (design 1000.4), rolloff -40.0 dB/dec, MC yield 99.3% inside +/-10%, sigma 35 Hz</p></div>
+    <p><a class="link-arrow" href="https://github.com/nem6557-cmyk/nem-portfolio/tree/main/labs/ngspice/02-sallen-key" target="_blank" rel="noopener">Code and run log <span>&rarr;</span></a></p>
+  </section>
+  <section class="doc-section">
+    <h2>NG-3 &middot; The buck converter that taught a lesson</h2>
+    <p>A 12-to-5 V buck at 100 kHz. The first run of this lab reported 110 mV of 'ripple' that disagreed with the small-ripple analysis by 30 times, and the waveform showed why: the output LC is underdamped and its startup transient rings for about 12 milliseconds, four times longer than the original measurement window. The corrected lab runs 25 ms, adds realistic capacitor ESR, and lands: inductor ripple within 1% of the volt-second prediction, output ripple 9.2 mVpp against a 13.1 mVpp in-phase upper bound whose quadrature estimate sits at 10. The wrong first cut stays documented in the script.</p>
+    <figure><div class="figure"><img src="assets/ng3-buck.png" width="1530" height="600" loading="lazy" decoding="async" alt="Buck converter startup showing the underdamped ring-down and the steady-state ripple zoom"></div><figcaption>Left: the ring-down that fooled the first measurement. Right: the actual switching ripple, measured after the transient has died.</figcaption></figure>
+    <div class="callout"><span class="tag-lbl">Verified output</span>
+    <p class="mono" style="font-size:13px">settled mean 4.641 V (async diode drop), ripple 9.17 mVpp vs 13.12 two-term bound, inductor ripple 0.306 A vs 0.309 predicted</p></div>
+    <p><a class="link-arrow" href="https://github.com/nem6557-cmyk/nem-portfolio/tree/main/labs/ngspice/03-buck" target="_blank" rel="noopener">Code and run log <span>&rarr;</span></a></p>
+  </section>
+</div>
+</div>
+
+<nav class="wrap next-nav">
+  <a href="labs.html">&larr; All labs</a>
+  <a href="labs-paraview.html">Next: Visualization &rarr;</a>
+</nav>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="colophon">
+      <span>ngspice 42 in batch mode; every figure regenerable from labs/ngspice.</span>
+      <span>&copy; <span id="year">2026</span> Nooruldeen Mustafa</span>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>
