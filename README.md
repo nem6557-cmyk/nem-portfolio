@@ -5,7 +5,7 @@ can trust because it was verified, not asserted. Everything runs
 headless, produces quantitative results against a known reference, and
 is written to be read, run, and extended.
 
-**Live portfolio site:** _add your Netlify URL here once deployed._ The
+**Live portfolio site:** https://effervescent-lamington-fd7140.netlify.app The
 site source lives in [`site/`](site) and is a dependency-free static
 build.
 
