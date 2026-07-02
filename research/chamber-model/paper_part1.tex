@@ -1,0 +1,1036 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{array}
+\usepackage{siunitx}
+\usepackage[hidelinks]{hyperref}
+\graphicspath{{./}{figs/}{figures/}{pub_figs/}{openfoam/doc_figs/}{openfoam/chamber42_3d/calibration/}}
+\captionsetup{font=small,labelfont=bf}
+\setlength{\parskip}{4pt}
+
+\title{\textbf{A Subcooled Pool-Boiling Chamber with a Submerged Tube-Bundle Condenser:\\
+A Validated Reduced-Order Predictive Thermal Model}}
+\author{[Author list]\\
+\small Thermal Analysis Laboratory, Department of Mechanical Engineering\\
+\small Rochester Institute of Technology, Rochester, NY, USA}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+This paper presents a validated reduced-order predictive thermal model of a closed, subcooled
+pool-boiling chamber in which a heated chip boils a dielectric working fluid and the vapor is
+rejected to coolant through a partially submerged tube-bundle condenser, a configuration
+developed for high-heat-flux data-center cooling. The model is a mechanistically grounded
+resistance network with a small set of physically interpretable constants: a transferable
+surface--fluid coefficient for nucleate boiling, a fixed area augmentation for the
+open-microchannel surface ($A_r=2.17$), and a compact operating-point map for the
+coolant-side-limited condenser. It predicts chip surface temperature versus heat flux across two
+evaporator surfaces (plain copper and open microchannel), two condenser bundles (33-tube and
+42-tube), and four coolant inlet temperatures, reproducing 261 experimental points with a
+root-mean-square error of \SI{4.4}{K}. The plain- and microchannel-surface coefficients
+($C_{sf}=0.0131$ and $0.0067$) recover independently on geometrically different chambers and
+transfer between them, supporting their use as surface--fluid properties rather than per-chamber
+fits. Out-of-sample tests, leaving out one coolant inlet and transferring the surface coefficient
+across chambers, support the predictive claim and localize the residual to the operating-point
+representation of the confined-bundle condenser. The calibrated model is then used to predict the
+performance of a denser, untested 66-tube condenser, whose lower coolant-side resistance follows
+from its smaller tube bore.
+\end{abstract}
+
+\section{Introduction}
+Two-phase immersion cooling of high-power electronics relies on nucleate boiling at a
+heated surface and condensation of the generated vapor at a heat exchanger. In a closed
+chamber the two processes are coupled: the chamber pressure, hence the saturation
+temperature $T_{sat}$ at which the fluid boils and condenses, settles so that the
+condenser rejects exactly the heat the chip dissipates. Predicting chip temperature for
+an untested geometry therefore requires not only a boiling correlation but also a
+prediction of the operating point itself. The objective is a genuinely predictive model
+that forecasts chip surface temperature for new condenser and evaporator geometries,
+coolant inlet temperatures, and chip surfaces, rather than curve-fitting a single data
+set. The model is a reduced-order ``gray box'': mechanistic correlations carry the
+physics, and a minimal number of physically interpretable calibrated constants absorb
+what cannot be resolved from geometry alone.
+
+\section{Literature review}
+
+\paragraph{Thermal management context.}
+The rising power density of microprocessors and the growth of data-center workloads have
+made conventional air cooling insufficient, motivating direct liquid and two-phase
+schemes \cite{mudawar2001,azarifar2024}. Two-phase immersion cooling, in which a chip is
+immersed in a dielectric or water bath that boils on contact and condenses elsewhere in
+the enclosure, offers very high heat transfer coefficients and near-isothermal operation
+\cite{birbarah2020,wu2025}. The present chamber is a closed realization of this concept
+with a submerged condenser, so its performance depends jointly on the boiling surface and
+the condenser.
+
+\paragraph{The present apparatus.}
+The chamber modeled here was introduced by Shukla and Kandlikar \cite{shukla2024}, who combined
+subcooled pool boiling with a partially submerged tube-bundle condenser in a compact form factor
+that fits a 1U/2U server rack. Partly submerging the condenser augments subcooled boiling and adds
+direct-contact condensation, and high-speed imaging confirmed submerged condensation with small,
+discrete vapor bubbles. The reported thermal test vehicle dissipated about $400~\mathrm{W}$ at a
+surface temperature below $80~^\circ$C on Novec-7000, and over $1~\mathrm{kW}$ from a
+$34.5\times32~\mathrm{mm}$ plain copper chip on water, establishing the operating envelope this
+model is built to predict.
+
+\paragraph{Pool boiling and the boiling curve.}
+The characteristic boiling curve, with its single-phase, nucleate, transition and film
+regimes, was established by Nukiyama \cite{nukiyama1934} and treated comprehensively in
+the monographs of Carey \cite{carey2008} and Incropera et al.\ \cite{incropera2007}. The
+most widely used nucleate-boiling correlation is that of Rohsenow \cite{rohsenow1952}, in
+which a surface--fluid coefficient $C_{sf}$ encapsulates the combined effect of surface
+finish, wettability and fluid. Mikic and Rohsenow \cite{mikic1969} refined the treatment
+of surface characteristics, and Pioro \cite{pioro1999} compiled experimental $C_{sf}$
+values, emphasizing that the coefficient is a property of the specific surface--fluid pair
+and must be calibrated. This motivates fitting $C_{sf}$ once per chip surface and treating
+it as a transferable constant.
+
+\paragraph{Critical heat flux.}
+The peak nucleate flux, or critical heat flux (CHF), was first described by hydrodynamic
+instability theory \cite{zuber1959,kutateladze1948}, later extended to finite and oriented
+surfaces by Lienhard and Dhir \cite{lienhard1973}. Kandlikar \cite{kandlikar2001}
+introduced a force-balance model incorporating the dynamic receding contact angle and
+surface orientation; Mudawar and co-workers developed complementary near-saturated CHF
+models \cite{mudawar1997}. Because no burnout data beyond the measured CHF points were
+available, CHF is anchored to measurement rather than modeled mechanistically.
+
+\paragraph{Enhanced surfaces and open microchannels.}
+Surface structuring is the principal route to higher CHF and heat transfer coefficient.
+Cooke and Kandlikar \cite{cooke2011,cooke2012} showed that open microchannels milled into
+copper dissipate fluxes on the order of $240~\mathrm{W/cm^2}$ at low wall superheat, and
+identified channel rewetting and separate liquid--vapor pathways, rather than mere area
+increase, as the dominant mechanism. Subsequent work combined microchannels with sintered
+or electrodeposited porous coatings \cite{jaikumar2015,patil2014} and demonstrated
+bubble-induced convective liquid feeding \cite{jaikumar2016}. The chip modeled here uses
+the Cooke--Kandlikar geometry, represented by a fixed geometric area augmentation with a
+reduced $C_{sf}$.
+
+\paragraph{Dielectric working fluids.}
+Immersion cooling favors dielectric coolants, fluorocarbons and hydrofluoroethers such as
+Novec/HFE-7000, for their electrical inertness and low, near-ambient saturation temperature
+(about $34~^\circ$C for HFE-7000 at atmospheric pressure), at the cost of a much lower critical heat
+flux than water. El-Genk and Pourghasemi \cite{elgenk2021a,elgenk2021b} measured saturated and
+subcooled boiling of HFE-7000 on copper of varying roughness and orientation, correlating both the
+heat transfer coefficient and CHF against surface roughness, subcooling, and inclination; they
+report CHF on plain copper near $20$--$30~\mathrm{W/cm^2}$, rising $50$--$70\%$ at $30~\mathrm{K}$
+subcooling. These dependences, roughness, subcooling, and contact angle, are the levers the
+present CHF closure must capture when the model is extended from water to HFE-7000.
+
+\paragraph{Condensation.}
+The condenser side rests on the classical film-condensation analysis of Nusselt
+\cite{nusselt1916}, extended to dropwise condensation \cite{rose2002} and to tube bundles
+in the standard references \cite{collier1994}. A central finding here is that, for this
+geometry, condensation is not the limiting resistance.
+
+\paragraph{Internal convection.}
+The coolant-side resistance is governed by internal forced convection. For the short,
+small-bore tubes used here the flow is laminar and thermally developing, a regime
+described by Hausen's entrance-region correlation \cite{hausen1943} and tabulated by Shah
+and London \cite{shah1978}; the turbulent limit is covered by Gnielinski
+\cite{gnielinski1976}, and external natural convection by Churchill and Chu
+\cite{churchill1975}. Recognizing the developing-laminar character of the coolant flow is
+what corrects an earlier over-prediction of the operating point.
+
+\paragraph{System-level studies and reduced-order models.}
+At the system level, immersion cooling is pursued in both single-phase \cite{shrigondekar2023} and
+two-phase \cite{wu2025} forms, and recent multi-chip and loop studies emphasize that overall
+performance is set as much by the condenser and the coolant loop as by the boiling surface. Detailed
+CFD of such chambers is costly, which has motivated semi-empirical and lumped models for design-space
+exploration; the gray-box developed here follows that line, pairing mechanistic correlations with a
+small set of calibrated, physically interpretable constants rather than a full numerical solution.
+
+\paragraph{Closed-chamber coupling and the gap addressed here.}
+Closed two-phase enclosures and thermosyphons couple evaporation and condensation through
+the vapor space \cite{faghri1995}, and non-condensable gases and headspace pressure shift
+the operating point. Yet most boiling and condensation studies treat the two processes in
+isolation, and few predict the coupled operating point of a closed chamber from geometry
+alone. The present model addresses that gap with a calibrated, mechanistically grounded
+operating-point sub-model.
+
+\section{Methods}
+
+\subsection{Chip and condenser geometry}
+Both chips share an $11.04~\mathrm{cm^2}$ ($34.5\times32$~mm) copper footprint and are
+mounted at the base of the chamber. The plain chip is polished to $R_a\approx2.5~\mu$m.
+The enhanced chip carries open microchannels of the Cooke--Kandlikar type
+\cite{cooke2012}: rectangular channels $381~\mu$m wide and $400~\mu$m deep separated by
+$250~\mu$m fins, increasing the wetted area and providing rewetting pathways. Three
+submerged copper condensers are considered (Table~\ref{tab:geom}). The 33-tube design uses
+relatively large $4.76$~mm tubes with external (open) manifolds; the 42-tube design uses
+denser, smaller $3.175$~mm tubes with in-chamber manifolds, placing a lower, more
+submerged bank in the pool; the 66-tube design exists in CAD but has no experimental data.
+The coolant is water, supplied at $\sim\!78~\mathrm{g/s}$ (33-tube) and
+$\sim\!36~\mathrm{g/s}$ (42-tube).
+
+\begin{table}[H]
+\centering
+\caption{Condenser and chip geometry.}
+\label{tab:geom}
+\begin{tabular}{lccccc}
+\toprule
+Condenser & Tubes $N$ & OD (mm) & ID (mm) & $L$ (mm) & Ext.\ area (cm$^2$)\\
+\midrule
+33-tube (open manifolds)       & 33 & 4.76  & 3.14 & 95.0 & 469 \\
+42-tube (in-chamber manifolds) & 42 & 3.175 & 1.39 & 62.6 & 262 \\
+66-tube (no data yet)          & 66 & 2.00  & 1.80 & 95.0 & 394 \\
+\midrule
+\multicolumn{6}{l}{\textit{Chip surfaces}}\\
+Plain        & \multicolumn{5}{l}{polished copper, $R_a\approx2.5~\mu$m}\\
+Microchannel & \multicolumn{5}{l}{open channels $381~\mu$m wide $\times\,400~\mu$m deep, $250~\mu$m fins}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The two condenser bundles are shown in cross-section in Figure~\ref{fig:xsec}, reconstructed
+from the CAD. The 33-tube bundle is a single bank of 33 relatively large straight tubes in five
+staggered rows; the 42-tube bundle is denser, with 42 smaller-diameter straight tubes in four
+staggered rows fed by in-chamber manifolds. All tube axes are parallel; the tubes are straight,
+not U-shaped.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.74\textwidth]{mc_xsec.png}
+\caption{Condenser cross-sections drawn to a common scale from the CAD geometry, looking along
+the tube axis (coolant into the page). The 33-tube bundle uses larger straight tubes at wider
+pitch; the 42-tube bundle uses more, smaller straight tubes at tighter pitch.}
+\label{fig:xsec}
+\end{figure}
+
+\subsection{Modeling domain}
+The model resolves the chip-to-coolant path as the reduced thermal network of
+Figure~\ref{fig:domain}. Three temperatures are tracked: the chip surface $T_{surf}$, the
+bulk (pool) liquid $T_{bulk}$, and the coolant inlet $T_{in}$. Heat $Q$ flows from the
+chip into the pool across a boiling/chip resistance and from the pool to the coolant across
+a condenser resistance, the two acting in series. The pool is treated as a single
+well-mixed reservoir at $T_{bulk}=T_{sat}-\Delta T_{sub}$; the vapor space and chamber
+pressure are represented implicitly through the saturation temperature; and the condenser
+is reduced to a coolant-side-limited heat exchanger characterized by the operating-point
+map. The chip surface is a lumped boiling node rather than a spatially resolved field. This
+reduction is justified a posteriori by the resistance breakdown, which shows the path is
+dominated by two clearly separated resistances.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{mc_domain.png}
+\caption{Physical domain (left) and the reduced thermal network (right). The chip boils the
+subcooled pool; vapor condenses on the submerged bundle and rejects heat to the internal
+water coolant. The chip-to-coolant path reduces to two series resistances about the bulk
+liquid temperature.}
+\label{fig:domain}
+\end{figure}
+
+\subsection{Governing equations}
+The chip dissipates heat by simultaneous single-phase convection into the subcooled pool
+and nucleate boiling. The nucleate component follows the Rohsenow correlation
+\cite{rohsenow1952},
+\begin{equation}
+q''_{nb}(T_s) = \mu_l h_{fg}\sqrt{\frac{g(\rho_l-\rho_v)}{\sigma}}
+\left[\frac{c_{p,l}\,(T_s-T_{sat})}{C_{sf}\,h_{fg}\,Pr_l^{\,s}}\right]^{3},
+\qquad T_s>T_{sat},
+\label{eq:rohsenow}
+\end{equation}
+with $s=1$ for water. The single-phase component is a horizontal-surface natural-convection
+coefficient scaled by a per-chamber factor $F_{nc}$,
+\begin{equation}
+q''_{nc}(T_s) = F_{nc}\, h_{nc}(T_s,T_{bulk})\,(T_s-T_{bulk}).
+\label{eq:nc}
+\end{equation}
+The mechanisms combine in quadrature, and the microchannel surface uses the same
+expressions multiplied by a geometric area-augmentation ratio $A_r$:
+\begin{equation}
+q'' = A_r\sqrt{q''_{nc}(T_s)^2 + q''_{nb}(T_s)^2}.
+\label{eq:blend}
+\end{equation}
+The microchannel critical heat flux exceeds the plain value by a near-constant,
+geometry-independent increment,
+\begin{equation}
+q''_{CHF,\,micro} = q''_{CHF,\,plain} + \Delta q''_{CHF},
+\qquad \Delta q''_{CHF}\approx 60~\mathrm{W/cm^2}.
+\label{eq:chf}
+\end{equation}
+The chamber operating point closes the system. A resistance breakdown
+(Section~\ref{sec:results}) shows the condenser is coolant-side limited, with internal flow
+developing-laminar ($Re\!\sim\!1100$) and film condensation nearly ideal and almost
+negligible; the coolant-side conductance improves as the system warms, so $T_{sat}$
+responds to coolant inlet with a gain below unity. The developing-laminar Nusselt number
+\cite{hausen1943},
+\begin{equation}
+Nu = 3.66 + \frac{0.0668\,Gz}{1+0.04\,Gz^{2/3}},\qquad Gz=\frac{D_i}{L}\,Re\,Pr,
+\label{eq:hausen}
+\end{equation}
+reproduces the magnitude and temperature dependence of the dominant resistance and motivates
+a calibrated linear operating-point map per chamber,
+\begin{align}
+T_{sat} &= a\,T_{in} + b\,Q + c, \label{eq:tsat}\\
+\Delta T_{sub} &= \max\!\big(d\,T_{in} + e\,Q + f,\;0\big),\label{eq:sub}\\
+Q &= q''\,A_{\mathrm{foot}}, \qquad A_{\mathrm{foot}}=11.04~\mathrm{cm^2}.\nonumber
+\end{align}
+The chip-to-coolant path is split at the bulk liquid into two series resistances,
+\begin{equation}
+R_{chip}=\frac{T_s-T_{bulk}}{Q},\qquad R_{cond}=\frac{T_{bulk}-T_{in}}{Q},\qquad
+R_{tot}=R_{chip}+R_{cond}=\frac{T_s-T_{in}}{Q}.
+\label{eq:resistance}
+\end{equation}
+
+\subsection{Solver setup}
+The model is implemented in Python (NumPy/SciPy). Thermophysical properties are evaluated
+with CoolProp for water (\texttt{Water}). HFE-7000 is not available in the CoolProp build used
+here, so its properties are taken from the literature \cite{elgenk2021a} and held fixed
+($h_{fg}=142~\mathrm{kJ/kg}$, $\sigma=12.4~\mathrm{mN/m}$, $T_{sat}\approx34~^\circ$C at $1$~atm).
+Properties are evaluated at the saturation or film temperature and cached. The fully predictive chain proceeds as follows: from the
+inputs $(q'',T_{in},\text{geometry})$ the operating-point map, Eqs.~\eqref{eq:tsat}--\eqref{eq:sub},
+returns $T_{sat}$ and $\Delta T_{sub}$, hence $T_{bulk}$; the chip relation,
+Eq.~\eqref{eq:blend}, is then solved for the surface temperature $T_s$ by Brent's method on
+the bracket $[\,T_{bulk},\,T_{sat}+260\,\mathrm{K}\,]$, widened to $+1000$~K (water) or $+200$~K
+(HFE-7000) if the root is not initially bracketed, to a tolerance of $10^{-6}~\mathrm{K}$. No measured operating condition enters the prediction. Boiling curves
+and parity plots are generated by sweeping $q''$ from $2~\mathrm{W/cm^2}$ to the
+configuration CHF. The model contains no spatial PDE; it is a reduced-order network of
+algebraic closures, so the only numerical parameters are the root-finder tolerance, the
+flux-sweep resolution, and the discretization of the mechanistic coolant-side estimate.
+
+\subsection{Discretization sensitivity}
+Two numerical resolutions were verified (Figure~\ref{fig:mesh}). First, the mechanistic
+coolant-side estimate that motivates the resistance coefficient $b$ integrates the local
+developing-laminar Nusselt number along each tube by a one-dimensional finite-volume
+marching scheme: the tube is divided into $N$ axial segments, the coolant temperature is
+advanced segment by segment under an isothermal condensing wall, and the length-averaged
+internal Nusselt number is recovered from the log-mean temperature difference. The
+length-averaged $\overline{Nu}$ converges monotonically, changing by less than $0.4\%$
+between $N=128$ and $N=512$ for both chambers. Second, the predicted boiling curves and
+parity data are sampled on a flux sweep; the curve is grid-independent to better than
+$0.05~\mathrm{K}$ beyond $80$ points. Production runs use $256$ axial segments and $90$
+flux points, and the nonlinear surface-temperature solve converges to below
+$10^{-4}~\mathrm{K}$, so all reported results are numerically converged.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{mc_mesh.png}
+\caption{Discretization sensitivity. Left: length-averaged coolant-side Nusselt number versus
+axial segments per tube from the 1D marching scheme; both chambers plateau by a few hundred
+segments. Right: maximum deviation of the predicted boiling curve from a fine reference versus
+flux-sweep resolution.}
+\label{fig:mesh}
+\end{figure}
+
+\subsection{Coefficient determination and justification}
+\label{sec:coeff}
+The calibrated constants are listed in Table~\ref{tab:params}; how each was obtained and why
+it is defensible follows.
+
+\textit{Surface--fluid coefficients $C_{sf}$.} Fit by least squares of
+Eq.~\eqref{eq:rohsenow} to the measured wall-superheat--flux data on each chip, all coolant
+inlets pooled. Both calibrated values land on tabulated Rohsenow coefficients for the matching
+copper finish (Table~\ref{tab:csf}). The plain value $0.0131$ agrees with water on polished
+copper, $0.0128$--$0.0130$ \cite{rohsenow1952,vachon1968}, to within $2\%$. The microchannel
+value $0.0067$, roughly half, coincides with the classic value for water on \emph{scored} copper,
+$0.0068$ \cite{vachon1968}, which is physically apt: the open microchannels are an aggressive
+grooving of the surface that raises the active nucleation-site density \cite{cooke2012}. That two
+coefficients fit only to this chamber's data reproduce independent handbook values for the
+corresponding surface finish is direct evidence they are genuine surface--fluid properties rather
+than tuning constants. Section~\ref{sec:crossval} adds a cross-chamber transfer test, and the
+identical plain boiling curve on both chambers confirms chamber independence.
+
+\begin{table}[H]
+\centering
+\caption{Calibrated $C_{sf}$ against tabulated Rohsenow values for water on copper, ordered by
+value to pair each chip with its matching finish. Handbook values from
+\cite{rohsenow1952,vachon1968}.}
+\label{tab:csf}
+\begin{tabular}{lc}
+\toprule
+Surface (water on copper) & $C_{sf}$\\
+\midrule
+Scored copper (handbook) & 0.0068\\
+\textbf{Microchannel chip (this work)} & \textbf{0.0067}\\
+Polished copper (handbook) & 0.0128--0.0130\\
+\textbf{Plain chip (this work)} & \textbf{0.0131}\\
+Lapped copper (handbook) & 0.0147\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textit{Area augmentation $A_r=2.17$.} Not fitted. It is the geometric wetted-to-footprint
+area ratio of the Cooke--Kandlikar microchannel, computed from the channel and fin dimensions.
+Using the geometric value rather than a free multiplier preserves the predictive intent.
+
+\textit{CHF increment $\Delta q''_{CHF}=+60~\mathrm{W/cm^2}$.} Obtained from the measured
+plain-to-microchannel CHF differences, which are $+64$ and $+59~\mathrm{W/cm^2}$ on the two
+chambers. The additive constant fits both far better than multiplying by $A_r$, which would
+over-predict the microchannel CHF to $\sim\!247$ and $\sim\!141~\mathrm{W/cm^2}$. A roughly
+fixed flux increment is consistent with a rewetting-limited enhancement that is largely
+independent of bundle geometry.
+
+\textit{Single-phase factor $F_{nc}$.} Fit per chamber on the low-flux, pre-boiling data to
+match the single-phase slope. It lumps subcooled-boiling onset and bulk circulation and is
+larger for the open 33-tube ($9.0$) than the confined 42-tube ($3.5$), consistent with stronger
+circulation in the open layout. It is chamber-specific, not transferable.
+
+\textit{Operating-point coefficients $(a,b,c)$.} Per-chamber multilinear regression of measured
+$T_{sat}$ on coolant inlet and chamber heat load, pooling plain and microchannel points across
+all coolant inlets. The coolant gain $a$ is below unity ($0.26$ open, $0.71$ confined),
+expressing the coolant-side limitation and the conductance improvement as the chamber warms; the
+slope $b$ is an effective resistance whose magnitude is consistent with the 1D developing-laminar
+estimate of Figure~\ref{fig:mesh}; $c$ is an offset. The regressions give a saturation-temperature
+RMSE of about $4~\mathrm{K}$ (33-tube) and $9~\mathrm{K}$ (42-tube).
+
+\textit{Subcooling coefficients $(d,e,f)$.} Per-chamber regression of measured subcooling on
+coolant inlet and heat load. The 33-tube fit is well determined ($R^2\approx0.81$); the 42-tube
+fit is essentially scatter ($R^2\approx0.06$) and is flagged as a limitation.
+
+\begin{table}[H]
+\centering
+\caption{Calibrated model constants. $C_{sf}$ and $A_r$ are transferable; $F_{nc}$ and the
+operating-point coefficients are per chamber. $b$ and $e$ are in K/W.}
+\label{tab:params}
+\begin{tabular}{llcc}
+\toprule
+Group & Constant & 33-tube & 42-tube\\
+\midrule
+Evaporator & $C_{sf}$ (plain) & \multicolumn{2}{c}{$0.0131$}\\
+           & $C_{sf}$ (microchannel) & \multicolumn{2}{c}{$0.0067$}\\
+           & Area augmentation $A_r$ (microchannel) & \multicolumn{2}{c}{$2.17$}\\
+           & Single-phase factor $F_{nc}$ & $9.0$ & $3.5$\\
+\midrule
+CHF        & $q''_{CHF}$ plain (W/cm$^2$) & $114$ & $65$\\
+           & Microchannel increment $\Delta q''_{CHF}$ (W/cm$^2$) & \multicolumn{2}{c}{$+60$}\\
+\midrule
+Operating  & $a$ (coolant gain) & $0.262$ & $0.710$\\
+$T_{sat}$  & $b$ (K/W) & $5.99\times10^{-3}$ & $2.41\times10^{-2}$\\
+           & $c$ (K) & $44.8$ & $33.1$\\
+\midrule
+Subcooling & $d$ & $-0.639$ & $-0.217$\\
+           & $e$ (K/W) & $-6.80\times10^{-3}$ & $-7.01\times10^{-4}$\\
+           & $f$ (K) & $40.8$ & $19.6$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Microchannel coefficient identifiability}
+\label{sec:microfit}
+Because the open-microchannel chip is the same physical surface in both chambers, its surface
+coefficient should be a single transferable value, and refitting it tests that. Fit chip-side
+against the measured operating point, the microchannel $C_{sf}$ minimizes at 0.0070 on the
+33-tube and 0.0064 on the 42-tube (Fig.~\ref{fig:microfit}a), bracketing the adopted pooled
+value 0.0067; the two chambers agree to within the width of a shallow minimum, and refitting
+$C_{sf}$ alone changes the chip-side RMSE by less than 0.01~K. The coefficient is therefore well
+determined and chamber-independent, consistent with the plain-chip transfer test of
+Section~\ref{sec:crossval}.
+
+Freeing the area augmentation $A_r$ jointly with $C_{sf}$ does not help. The two parameters both
+multiply the boiling heat transfer, so they trade off along a degenerate valley
+(Fig.~\ref{fig:microfit}b): pooled, the minimum drifts to $(0.0084, 3.03)$ for a chip-side gain
+of only 0.4~K, while the per-chamber joint fits split to $(0.0064, 1.93)$ and $(0.0091, 3.50)$
+and, applied end to end, trade one chamber for the other, improving the 42-tube microchannel RMSE
+from 5.2 to 4.5~K but worsening the 33-tube from 4.8 to 5.2~K. Holding $A_r$ at its geometric
+value 2.17 and $C_{sf}$ at the pooled 0.0067 is thus the parsimonious choice: it keeps the area a
+measured quantity rather than a fitted one and avoids overfitting a two-parameter enhancement to
+limited data. The residual microchannel error is not a deficiency of the surface coefficient; with
+the operating point taken from the data, the chip-side RMSE (5.6 and 7.1~K) exceeds the end-to-end
+RMSE (4.8 and 5.2~K), which means the smooth operating-point map averages out scatter that the raw
+measured saturation and subcooling carry, and that scatter, not the chip coefficient, sets the
+floor.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{mc_microfit.png}
+\caption{Microchannel coefficient identifiability. (a) Chip-side RMSE versus microchannel
+$C_{sf}$ with the area augmentation fixed: both chambers minimize near the adopted 0.0067.
+(b) Pooled chip-side RMSE over $(C_{sf}, A_r)$: the two parameters trade off along a degenerate
+valley, and the per-chamber joint fits (markers) split apart, so the single geometric area plus
+the pooled coefficient is the robust choice.}
+\label{fig:microfit}
+\end{figure}
+
+\subsection{Parameter sensitivity}
+\label{sec:sens}
+Figure~\ref{fig:sens} shows how far the predicted chip temperature moves when each calibrated
+constant is perturbed by $\pm10\%$, averaged over all points. The ranking is informative. The
+operating-point offset $c$ dominates ($3.2~\mathrm{K}$) and the coolant gain $a$ is second
+($1.5~\mathrm{K}$), because both shift the predicted saturation temperature, which propagates
+almost directly into chip temperature. The boiling and single-phase constants are secondary: a
+$\pm10\%$ change in $C_{sf}$ moves the chip temperature under $1~\mathrm{K}$ and $A_r$ under
+$0.3~\mathrm{K}$. Two conclusions follow. The model is not hypersensitive to any single chip
+constant, so the few-percent uncertainty in $C_{sf}$ or $A_r$ established above is not limiting.
+And the accuracy is governed mainly by the empirical operating-point map, the same component the
+out-of-sample test (Section~\ref{sec:crossval}) identifies as the weakest link and that a direct
+condenser closure would most improve.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.82\textwidth]{mc_sensitivity.png}
+\caption{Sensitivity of predicted chip temperature to a $\pm10\%$ change in each calibrated
+constant, averaged over all 261 points. Operating-point constants (orange) dominate; chip
+constants (blue) are secondary.}
+\label{fig:sens}
+\end{figure}
+
+\subsection{Measurement uncertainty}
+\label{sec:uncertainty}
+The error metrics are referenced to the measured chip temperature, which carries its own
+experimental uncertainty. Following the laboratory's established procedure
+\cite{mody2022,shukla2024}, uncertainties are propagated by the root-sum-square
+(Kline--McClintock) method, with contributions from thermocouple calibration, the copper
+thermal conductivity, the thermocouple spacing, and the instrument least count. The chip
+surface temperature is obtained by extrapolating the embedded thermocouple readings to the
+boiling surface through the copper conduction length:
+\begin{equation}
+T_{surf} = T_{tc} - q''\,\frac{\Delta x}{k_{Cu}}, \qquad
+U_{T_{surf}}^2 = U_{T_{tc}}^2 + \Big(\tfrac{\Delta x}{k_{Cu}}\Big)^2 U_{q''}^2
+ + \Big(\tfrac{q''}{k_{Cu}}\Big)^2 U_{\Delta x}^2 .
+\end{equation}
+The calibrated thermocouple uncertainty is $U_{T_{tc}}=\pm0.05~\mathrm{K}$, the
+sensor-to-surface spacing $\Delta x = 5~\mathrm{mm}$ at $U_{\Delta x}=\pm0.01~\mathrm{mm}$, and
+the copper conductivity $k_{Cu}=401\pm9~\mathrm{W\,m^{-1}K^{-1}}$ ($2.2\%$). The heat flux
+follows from the one-dimensional gradient $q''=-k_{Cu}\,(dT/dx)$ fit to the thermocouple column;
+its relative uncertainty is dominated by the random scatter in that gradient at low flux and by
+the systematic ($k_{Cu}$, spacing) floor at high flux. For the present data it falls from
+$10.9\%$ at the lowest flux ($\sim9~\mathrm{W\,cm^{-2}}$) to a systematic floor of about $2.5\%$
+(set by $k_{Cu}$ and the spacing) at high flux. The boiling curves are logged continuously over
+the full nucleate range up to the critical heat flux of each configuration, reaching
+$174~\mathrm{W\,cm^{-2}}$ on the microchannel 33-tube (Table~\ref{tab:rmse}); the high-flux
+nucleate branch is therefore measured, not a model extrapolation anchored only at a separate CHF
+point, and the reported critical heat fluxes carry about $\pm4\%$. The conduction correction
+$q''\,\Delta x/k_{Cu}$ grows with flux, reaching $\sim22~\mathrm{K}$ at $174~\mathrm{W\,cm^{-2}}$,
+so its contribution to $U_{T_{surf}}$ scales with load: $U_{T_{surf}}$ is within
+$\pm0.2~\mathrm{K}$ at low and moderate flux and widens to about $\pm0.5~\mathrm{K}$ at the CHF
+points. The saturation temperature is set by the chamber pressure through the vapor-pressure
+slope, $U_{T_{sat}}=(dT_{sat}/dP)\,U_P$ with $dT_{sat}/dP\approx0.28~\mathrm{K/kPa}$ for water
+and HFE-7000 near their saturation, so a transducer uncertainty of order $0.5~\mathrm{kPa}$ gives
+$U_{T_{sat}}\approx\pm0.15~\mathrm{K}$ and a wall-superheat uncertainty within
+$\pm0.25~\mathrm{K}$. The coolant-side balance $Q=\dot m\,c_p\,(T_{out}-T_{in})$ provides an
+independent check on the chip flux. These bands set the noise floor against which the model error
+should be read: even at the worst-case $\pm0.5~\mathrm{K}$ surface-temperature uncertainty reached
+at CHF, the chip-temperature RMSE of $4.4~\mathrm{K}$ exceeds it by roughly an order of magnitude,
+so the residual reflects model structure, chiefly the operating-point regression, rather than
+measurement noise.
+
+\section{Results and validation}
+\label{sec:results}
+
+\subsection{Model versus experiment for each chip and condenser}
+Figure~\ref{fig:mve} compares the fully predictive model against experiment for each chip and
+condenser separately, plotting heat flux against chip surface temperature with the model swept to
+CHF. Per-configuration errors are in Table~\ref{tab:rmse}; the aggregate parity is
+Figure~\ref{fig:parity}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.49\textwidth]{mve_33_plain.png}\hfill
+\includegraphics[width=0.49\textwidth]{mve_33_micro.png}\\[3pt]
+\includegraphics[width=0.49\textwidth]{mve_42_plain.png}\hfill
+\includegraphics[width=0.49\textwidth]{mve_42_micro.png}
+\caption{Heat flux versus chip surface temperature for each chip and condenser, model swept to
+CHF. Markers are measured (distinct symbol per coolant inlet); lines are the fully predictive
+model.}
+\label{fig:mve}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Chip-temperature prediction error (fully predictive).}
+\label{tab:rmse}
+\begin{tabular}{lcc}
+\toprule
+Configuration & RMSE (K) & CHF (W/cm$^2$)\\
+\midrule
+33-tube, plain        & 3.2 & 114\\
+42-tube, plain        & 4.5 & 65\\
+33-tube, microchannel & 4.9 & 174\\
+42-tube, microchannel & 5.2 & 125\\
+\midrule
+All points            & 4.4 & $-$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.62\textwidth]{mc_endtoend.png}
+\caption{End-to-end parity of predicted versus measured chip surface temperature. The shaded band
+is $\pm15\%$.}
+\label{fig:parity}
+\end{figure}
+
+\subsection{Out-of-sample validation}
+\label{sec:crossval}
+The errors above are computed on the same points used for calibration. To test the central claim
+that the model predicts rather than fits, two out-of-sample exercises were run
+(Figure~\ref{fig:crossval}, Table~\ref{tab:crossval}). First, a leave-one-coolant-inlet-out test:
+for each chamber the operating-point and subcooling maps were refit on three of the four coolant
+inlets and used to predict chip temperature at the withheld inlet, with the mechanistic chip model
+held fixed. The 33-tube generalizes well, the held-out RMSE rising only from 3.7 to 4.9~K, and the
+interior inlets (30 and 40~$^\circ$C) are predicted at in-sample quality; the edge inlets (20 and
+50~$^\circ$C), which require extrapolating the linear map, are the hardest. The 42-tube degrades
+more, from 4.8 to 9.1~K, consistent with its higher coolant gain (0.71 versus 0.26), which makes
+the operating point depend strongly on coolant inlet, and with its poorly determined subcooling fit.
+
+Second, a cross-chamber transfer of the plain-chip surface coefficient. Fit independently on the two
+geometrically different chambers, $C_{sf}$ comes out at 0.0130 (33-tube) and 0.0121 (42-tube),
+nearly identical and both close to the pooled value 0.0131. Applying the coefficient fit on one
+chamber to the other raises the plain-chip RMSE by at most 0.2~K (33-tube 3.2 to 3.4~K; 42-tube 4.4
+to 4.5~K). This directly supports treating $C_{sf}$ as a transferable surface--fluid property rather
+than a per-chamber fit, which is the basis for predicting an untested chamber.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{mc_crossval.png}
+\caption{Out-of-sample validation. Left: chip temperature predicted for a coolant inlet withheld
+from the operating-point fit (held-out points only). Right: in-sample versus held-out error, with the
+plain-chip $C_{sf}$ recovered independently on each chamber.}
+\label{fig:crossval}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Out-of-sample validation. Leave-one-coolant-inlet-out (LOCO) refits the operating-point and
+subcooling maps on three coolant inlets and predicts the fourth; the transfer test applies a
+plain-chip $C_{sf}$ fit on one chamber to the other.}
+\label{tab:crossval}
+\begin{tabular}{lcc}
+\toprule
+ & 33-tube & 42-tube\\
+\midrule
+In-sample chip-temperature RMSE (K) & 3.7 & 4.8\\
+LOCO held-out chip-temperature RMSE (K) & 4.9 & 9.1\\
+LOCO held-out $T_{sat}$ RMSE (K) & 7.4 & 15.3\\
+\midrule
+$C_{sf}$ fit on this chamber alone & 0.0130 & 0.0121\\
+Plain-chip RMSE, native $C_{sf}$ (K) & 3.2 & 4.4\\
+Plain-chip RMSE, transferred $C_{sf}$ (K) & 3.4 & 4.6\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Origin of the 42-tube generalization gap}
+\label{sec:gen42}
+The leave-one-coolant-out gap between the chambers, 4.9~K held-out RMSE for the 33-tube against
+9.1~K for the 42-tube, is worth isolating because both chambers share the same mechanistic chip
+model; only the operating-point map differs. Figure~\ref{fig:gen42} traces the gap to its source,
+and the chip physics is not it. Holding the true operating point fixed, the two chambers predict
+surface temperature at the same quality; the difference lives entirely in how well the chamber
+pressure can be predicted.
+
+For the open 33-tube bundle the condenser-side resistance $(T_{liq}-T_{in})/Q$ is nearly
+flux-independent, a median near 13~mK/W across the full flux range (Fig.~\ref{fig:gen42}a). For the
+confined 42-tube bundle it is strongly flux-dependent, falling from roughly 150~mK/W at low flux to
+about 45~mK/W near CHF, a slope of $-2.3$~mK/W per W/cm$^2$ against the 33-tube's $-0.07$. The
+confined bundle is coolant-starved at low flux and progressively better swept as boiling intensifies,
+so its pool-to-coolant resistance, and therefore the chamber pressure and saturation temperature it
+sets, depend nonlinearly on heat load. The linear operating-point map $T_{sat}=a\,T_{in}+b\,Q+c$
+cannot represent this: it fits the 42-tube saturation temperature with an 8.6~K RMS residual against
+4.1~K for the 33-tube.
+
+That operating-point error transmits almost one-to-one to surface temperature. Perturbing the
+saturation temperature in the chip model gives $dT_{surf}/dT_{sat}\approx0.9$ for both chambers,
+since in nucleate boiling the wall tracks saturation. Figure~\ref{fig:gen42}b confirms it: across the
+held-out points the surface-temperature error follows the saturation-temperature error along the 0.9
+line, and the 42-tube simply spans a far wider band of operating-point error, about $\pm35$~K against
+$\pm15$~K. The three metrics line up accordingly (Fig.~\ref{fig:gen42}c): the 42-tube is worse by the
+same factor of roughly two on the saturation-map residual (8.6 versus 4.1~K), the held-out saturation
+error (15.3 versus 7.4~K), and the held-out surface-temperature RMSE (9.1 versus 4.9~K). The gap is
+thus a limitation of representing a flux-dependent confined-bundle condenser with a load-linear map,
+not of the boiling model. The implication for an untested confined geometry is concrete: the
+operating-point sub-model should carry a mechanistic flux-dependent condenser resistance rather than a
+linear-in-$Q$ fit, which is the single change most likely to bring 42-tube-class generalization in
+line with the 33-tube.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{mc_gen42.png}
+\caption{Origin of the 42-tube generalization gap. (a) Condenser-side resistance versus heat flux:
+flat for the open 33-tube, strongly flux-dependent for the confined 42-tube (binned medians over the
+data cloud). (b) Held-out surface-temperature error versus held-out saturation-temperature error;
+both follow the $dT_{surf}/dT_{sat}\approx0.9$ line, the 42-tube over a wider range. (c) The 42-tube
+is worse by about a factor of two on the saturation-map residual, the held-out saturation error, and
+the held-out surface-temperature RMSE alike.}
+\label{fig:gen42}
+\end{figure}
+
+\subsection{Comparison with baseline models}
+\label{sec:baseline}
+To show that the two main modeling choices earn their place, the full gray-box is compared against
+two reduced alternatives (Table~\ref{tab:baseline}). The first replaces the per-surface boiling
+coefficients with a single literature value $C_{sf}=0.013$ for both chips. On the plain chip this
+is indistinguishable from the calibrated model (3.8 versus 3.8~K), confirming that the plain
+calibration only recovers the handbook value; on the microchannel it nearly doubles the error
+(8.8 versus 5.1~K), because the structured surface genuinely needs its own lower coefficient. The
+second replaces the calibrated operating-point map with an ideal effectiveness--NTU condenser using
+fully developed laminar coolant Nusselt number and the nominal tube area. Its effectiveness is only
+$0.03$--$0.04$, so it over-predicts the saturation temperature by a median of $30~\mathrm{K}$ and
+drives a few points above the critical point, which is nonphysical. Both comparisons reproduce the
+paper's central claims: the microchannel requires a distinct surface coefficient, and the condenser
+must be modeled as coolant-side limited rather than by ideal effectiveness--NTU.
+
+\begin{table}[H]
+\centering
+\caption{Baseline comparison. Chip-temperature RMSE (K) for the full model versus a single-$C_{sf}$
+evaporator; the effectiveness--NTU condenser is reported by its saturation-temperature error,
+being nonphysical at high flux.}
+\label{tab:baseline}
+\begin{tabular}{lccc}
+\toprule
+Model & All & Plain & Microchannel\\
+\midrule
+Full gray-box & 4.4 & 3.8 & 5.1\\
+Single $C_{sf}=0.013$, both chips & 6.4 & 3.8 & 8.8\\
+\midrule
+\multicolumn{4}{p{0.86\columnwidth}}{\footnotesize Effectiveness--NTU condenser: effectiveness
+$0.03$--$0.04$; median $T_{sat}$ over-prediction $30~\mathrm{K}$; 3/261 points nonphysical
+($>T_{crit}$).}\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Condenser operating behavior}
+\label{sec:condops}
+Figure~\ref{fig:condops} shows how the condenser sets the operating point as the two control
+parameters, coolant inlet temperature and chamber heat load, are varied. Removing the load
+contribution with the fitted map isolates the coolant-inlet sensitivity (top left): saturation
+temperature rises with coolant inlet at the coolant gain $a$, which is $0.26$ for the open 33-tube
+and $0.71$ for the confined 42-tube, so the open chamber largely pins its saturation temperature
+while the confined one tracks the coolant. Removing the inlet contribution isolates the load
+sensitivity (top right), whose slope is the effective resistance $b$, again much steeper for the
+42-tube. Pool subcooling falls with heat load (bottom left), and the condenser-side resistance
+(bottom right) is roughly flux-independent at $\sim\!13~\mathrm{mK/W}$ for the 33-tube and
+$\sim\!30$--$45~\mathrm{mK/W}$ for the 42-tube, consistent with the breakdown below.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{mc_condenser_ops.png}
+\caption{Condenser operating behavior. Saturation temperature versus coolant inlet (coolant gain)
+and heat load (effective resistance), pool subcooling versus load, and condenser-side resistance
+versus flux. Markers are data pooled over both chips; lines are the operating-point model.}
+\label{fig:condops}
+\end{figure}
+
+\subsection{Thermal resistance breakdown}
+Figure~\ref{fig:resistance} gives the chip-side and condenser-side resistances versus heat flux to
+CHF for each configuration, referenced to the bulk liquid temperature; values near CHF are in
+Table~\ref{tab:resistance}. Referenced to saturation, the boiling heat transfer coefficient is
+$\approx35~\mathrm{kW/m^2K}$ for the plain chip and up to $200~\mathrm{kW/m^2K}$ for the
+microchannel.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.49\textwidth]{res_33_plain.png}\hfill
+\includegraphics[width=0.49\textwidth]{res_33_micro.png}\\[3pt]
+\includegraphics[width=0.49\textwidth]{res_42_plain.png}\hfill
+\includegraphics[width=0.49\textwidth]{res_42_micro.png}
+\caption{Chip-side and condenser-side thermal resistance versus heat flux to CHF, referenced to
+bulk liquid temperature. Markers are data (distinct symbol per side); lines are the model.}
+\label{fig:resistance}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Thermal resistance near CHF, referenced to bulk liquid, $R=\Delta T/Q$ in mK/W.}
+\label{tab:resistance}
+\begin{tabular}{lccc}
+\toprule
+Configuration & $R_{chip}$ & $R_{cond}$ & $R_{tot}$\\
+\midrule
+33-tube, plain        & 33 & 13 & 47\\
+33-tube, microchannel & 11 & 13 & 24\\
+42-tube, plain        & 36 & 46 & 81\\
+42-tube, microchannel & 15 & 26 & 41\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The chip-side resistance is compared directly against experiment for both surfaces in
+Figure~\ref{fig:chipres}. The microchannel's roughly threefold reduction is evident, from
+$\sim\!38$ to $\sim\!13~\mathrm{mK/W}$ near CHF on the 33-tube, and the model tracks the
+experimental chip-side resistance for both chips, the largest deviation being the 42-tube plain
+configuration, consistent with its higher overall error.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{mc_chip_resistance.png}
+\caption{Chip-side thermal resistance $R_{chip}=(T_{surf}-T_{bulk})/Q$ versus heat flux, model
+versus experiment, referenced to bulk liquid. The microchannel cuts the chip-side resistance about
+threefold relative to the plain chip; the model reproduces both surfaces.}
+\label{fig:chipres}
+\end{figure}
+
+\section{Discussion}
+The central physical finding is that the condenser is limited by coolant-side
+developing-laminar convection rather than by condensation, and that its conductance improves
+with operating temperature. This produces a saturation-temperature gain on coolant inlet below
+unity and explains why the open 33-tube self-regulates while the confined 42-tube, with smaller,
+denser, more submerged tubes, climbs. The resistance split referenced to bulk liquid shows that
+the chip side, which carries the pool subcooling as well as the wall superheat, is the larger
+resistance for the open 33-tube, whereas the condenser side dominates for the confined 42-tube.
+The microchannel cuts the chip-side resistance roughly threefold, after which the condenser side
+is comparable (33-tube) or dominant (42-tube). The design consequence is explicit: surface
+enhancement of the chip is effective, but for the resistive 42-tube the condenser is the
+bottleneck, and further gains require improving it rather than the chip. The model also separates
+transferable quantities ($C_{sf}$, $A_r$) from chamber-specific ones ($F_{nc}$ and the
+operating-point coefficients), the latter being physically interpretable.
+
+\subsection{Predictive scope for untested geometry}
+\label{sec:scope}
+The two sides of the model are predictive to different degrees, which determines what can be
+forecast for hardware that has not been tested.
+
+\textit{New chip or area geometry: predictive.} The evaporator is fully mechanistic. The
+surface coefficient $C_{sf}$ is a transferable surface--fluid property (Sections~\ref{sec:coeff},
+\ref{sec:crossval}): it transfers across chambers at under $0.2~\mathrm{K}$ and matches handbook
+values by surface finish. The area augmentation $A_r$ is computed from the channel geometry, not
+fitted. A new boiling surface therefore needs only its $C_{sf}$, assigned from its finish or pinned
+by a single boiling curve, together with its geometric $A_r$; the full $T_{surf}(q'')$ curve then
+follows with no chamber-specific evaporator fitting. The exception is the burnout limit: the
+microchannel CHF is an additive \emph{measured} increment and the mechanistic CHF model is an
+uncalibrated placeholder, so the curve is predictable up to CHF but the CHF value itself needs a
+measurement or a dedicated closure.
+
+\textit{New condenser geometry: ranking predictable, absolute level needs one calibration.}
+The coolant-side resistance follows from geometry through the developing-laminar internal-flow
+correlation, and it sets the right order of magnitude and ordering
+(Table~\ref{tab:condmech}, Figure~\ref{fig:condscope}): the measured condenser-side resistance is
+$13.5~\mathrm{mK/W}$ for the 33-tube against a geometric estimate of $17.3$, and $42~\mathrm{mK/W}$
+for the 42-tube against $25.7$. The two chambers bracket the ideal, the open 33-tube does
+slightly better than full-area developing-laminar convection (additional shell-side mechanisms),
+the confined 42-tube does worse (only part of the bundle actively condenses), so the ratio of
+real to ideal resistance is a layout-dependent factor ($0.8$ open, $1.6$ confined) that tube
+dimensions alone do not pin. As a result the absolute operating point (the $T_{sat}$ and subcooling
+maps) is currently fit per condenser from one dataset; once fit, the model predicts across coolant
+inlets, fluxes, and chips for that condenser. Making the condenser side fully geometry-predictive, replacing the operating-point map with an active-area closure that returns $(a,b,c)$ from
+geometry and fill, is the main open step, and it requires at least a third characterized
+condenser to fit and test.
+
+\textit{The 66-tube.} Its coolant-side resistance is the lowest of the three by geometry
+($\sim\!11~\mathrm{mK/W}$ at the 33-tube coolant flow). The tubes are the same \SI{95}{mm}
+length as the 33-tube and the external area is in fact smaller ($394$ versus
+$469~\mathrm{cm^2}$, Table~\ref{tab:geom66}); the lower resistance comes from the smaller bore
+(\SI{1.80}{mm} ID versus \SI{3.14}{mm}), which raises the internal developing-laminar
+convective coefficient enough to more than offset the reduced external area. On condenser
+hardware alone it should therefore hold the lowest $T_{sat}$ for a given load and run the
+coolest chip. Being open like the 33-tube, its real-to-ideal factor is expected near the
+33-tube's, which bounds its operating point close to the geometric estimate. This remains a
+prediction until one 66-tube dataset is taken, which is the recommended next measurement.
+
+\begin{table}[H]
+\centering
+\caption{Condenser-side thermal resistance: geometric developing-laminar coolant-side estimate
+versus measured. The real-to-ideal ratio is layout-dependent, so it is not fixed by tube
+dimensions alone.}
+\label{tab:condmech}
+\begin{tabular}{lcccc}
+\toprule
+Condenser & $Re$ & Geometric $R$ (mK/W) & Measured $R$ (mK/W) & real/ideal\\
+\midrule
+33-tube (open)     & 1200 & 17.3 & 13.5 & 0.78\\
+42-tube (confined) & 985  & 25.7 & 42.0 & 1.63\\
+66-tube (open)     & 1050 & 11.1 & $-$ & $-$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.78\textwidth]{mc_condscope.png}
+\caption{Condenser-side resistance from geometry versus measurement. The developing-laminar
+coolant-side estimate sets the ranking and order of magnitude; a layout-dependent factor separates
+ideal from real. The 66-tube has the lowest geometric resistance but is not yet measured.}
+\label{fig:condscope}
+\end{figure}
+
+\subsection{Predicted 66-tube performance}
+\label{sec:pred66}
+The 66-tube operating point is not measured, but its one geometric difference, a lower
+condenser-side resistance, can be propagated through a construction that is first validated on the
+33-tube. The pool temperature is set by the condenser, $T_{bulk}=T_{in}+Q\,R_{cond}$, with $R_{cond}$
+the developing-laminar coolant-side estimate scaled by the open real-to-ideal factor; the saturation
+temperature is $T_{sat}=T_{bulk}+\Delta T_{sub}$ with subcooling from the open-bundle map; and the
+chip temperature follows from the transferable boiling model. Applied to the 33-tube this reproduces
+the calibrated model to within $0.2~\mathrm{K}$, so the same construction is used for the 66-tube
+with its geometric resistance of $8.7~\mathrm{mK/W}$ ($11.1\times0.78$).
+
+Tables~\ref{tab:geom66} and \ref{tab:pred66} give the geometry and the predicted operating point at
+CHF. Rejecting heat through roughly half the condenser-side resistance of the 33-tube, the 66-tube
+holds a cooler pool and a lower saturation temperature for the same load: the chip runs about
+$4~\mathrm{K}$ cooler on the plain surface and $8~\mathrm{K}$ cooler on the microchannel at CHF,
+the $\sim\!6~\mathrm{K}$ drop in saturation temperature outweighing a small rise in wall superheat
+at the lower pressure. The condenser-side resistance falls from $0.0135$ to $0.0087~\mathrm{K/W}$
+while the chip-side resistance, fixed by the same surface and flux, is nearly unchanged. These are
+predictions under stated assumptions, CHF and pool subcooling taken from the open 33-tube, that
+one 66-tube dataset would replace and test directly.
+
+\begin{table}[H]
+\centering
+\caption{Geometry of the three condensers. Internal and external areas are $\pi\,(ID)\,L\,N$ and
+$\pi\,(OD)\,L\,N$. The 66-tube coolant flow is assumed equal to the 33-tube loop ($^\ast$).}
+\label{tab:geom66}
+\begin{tabular}{lccc}
+\toprule
+ & 33-tube & 42-tube & 66-tube\\
+\midrule
+Tubes $N$ & 33 & 42 & 66\\
+Outer diameter (mm) & 4.76 & 3.18 & 2.00\\
+Inner diameter (mm) & 3.14 & 1.39 & 1.80\\
+Tube length (mm) & 95 & 62.6 & 95\\
+Internal area (cm$^2$) & 309 & 115 & 355\\
+External area (cm$^2$) & 469 & 262 & 394\\
+Coolant flow (g/s) & 78 & 36 & 78$^\ast$\\
+Coolant $Re$ & 1200 & 985 & 1050\\
+Manifolds & open ext. & in-chamber & open ext.\\
+Geometric coolant-side $R$ (mK/W) & 17.3 & 25.7 & 11.1\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Predicted 66-tube performance at CHF (coolant inlet $30~^\circ$C), with the 33-tube for
+comparison. CHF is taken equal to the 33-tube; the resistance split is referenced to bulk liquid.}
+\label{tab:pred66}
+\begin{tabular}{lcccc}
+\toprule
+ & \multicolumn{2}{c}{66-tube (predicted)} & \multicolumn{2}{c}{33-tube}\\
+ & plain & microch. & plain & microch.\\
+\midrule
+$q''_{CHF}$ (W/cm$^2$)        & 114  & 174  & 114  & 174\\
+Heat load $Q$ (W)            & 1259 & 1921 & 1259 & 1921\\
+$T_{sat}$ ($^\circ$C)        & 53.9 & 55.2 & 60.0 & 64.5\\
+Subcooling (K)               & 13.0 & 8.5  & 13.0 & 8.5\\
+$T_{surf}$ at CHF ($^\circ$C)& 85.6 & 69.8 & 89.4 & 77.5\\
+\midrule
+$R_{chip}$ (K/W) & 0.0355 & 0.0121 & 0.0337 & 0.0112\\
+$R_{cond}$ (K/W) & 0.0087 & 0.0087 & 0.0135 & 0.0135\\
+$R_{tot}$ (K/W)  & 0.0442 & 0.0207 & 0.0472 & 0.0247\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Figure~\ref{fig:bc66} shows the predicted boiling curve obtained by sweeping the same construction
+to CHF. The left panel is the boiling curve proper, heat flux against wall superheat: below boiling
+onset the surface sits in subcooled single-phase convection, and above it the nucleate branch rises
+steeply, with the microchannel reaching $174~\mathrm{W/cm^2}$ at about $15~\mathrm{K}$ superheat
+against $32~\mathrm{K}$ for the plain chip. The right panel plots flux against chip temperature with
+the 33-tube dashed for reference, showing the 66-tube holding a lower chip temperature at every flux
+because of its lower condenser-side resistance.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{mc_boilingcurve_66.png}
+\caption{Predicted 66-tube boiling curve at $30~^\circ$C coolant inlet. Left: heat flux versus wall
+superheat (single-phase below onset, nucleate above) to CHF. Right: heat flux versus chip surface
+temperature, with the 33-tube (dashed) for comparison. Curves use the geometry-based construction
+validated against the 33-tube; CHF is taken from the 33-tube pending a 66-tube measurement.}
+\label{fig:bc66}
+\end{figure}
+
+\section{Conclusions}
+\begin{enumerate}
+\item A reduced-order model predicts chip surface temperature from heat flux, coolant inlet
+temperature, chip surface, and condenser geometry, with no measured operating conditions, to a
+root-mean-square error of 4.4~K (median 4\% of absolute temperature; 5\% on the rise above coolant
+in the high-flux regime).
+\item The microchannel chip is captured by the same boiling machinery with a fixed area
+augmentation ($A_r=2.17$) and a halved, transferable surface coefficient ($C_{sf}=0.0067$ versus
+$0.0131$); its CHF is the plain CHF plus a constant $\sim\!60~\mathrm{W/cm^2}$.
+\item The condenser is coolant-side limited, and its coolant gain ($0.26$ open, $0.71$ confined)
+is a fingerprint of the chamber.
+\item Referenced to bulk liquid, the condenser side dominates the chip-to-coolant resistance for
+the confined 42-tube and is comparable to the chip side for the 33-tube once the microchannel is
+used, identifying the condenser as the target for further improvement.
+\item Out-of-sample tests support the predictive claim: the plain-chip surface coefficient fit
+independently on the two chambers agrees (0.0130 versus 0.0121) and transfers between them at a cost
+below 0.2~K, while a leave-one-coolant-inlet-out test predicts chip temperature at a withheld inlet
+with 4.9~K RMSE on the 33-tube (9.1~K on the 42-tube, limited by its stronger coolant-inlet
+dependence).
+\item The model is predictive on the evaporator side, a new chip surface is forecast from a
+transferable $C_{sf}$ and a geometric area augmentation, up to a CHF limit that still needs
+measurement, whereas the condenser side predicts the resistance ranking from geometry but
+requires one calibration dataset to fix the absolute operating point, which sets the agenda for a
+geometry-based condenser closure.
+\end{enumerate}
+
+\section{Limitations and future work}
+The operating-point coefficients are a calibrated per-chamber map, not a first-principles closure,
+partly because the coolant flow carries measurement uncertainty and the level dynamics that grow
+the condensing area are not resolved from geometry alone. Subcooling is well predicted on the
+33-tube and essentially scatter on the 42-tube. CHF is anchored to measured burnout. The immediate
+extension is a single run on the 66-tube condenser to fix its operating-point coefficients. The
+HFE-7000 path in the model is at present a literature-anchored prediction, with smooth-copper boiling
+coefficients rather than a chamber-data fit, so extending the model to a validated second working
+fluid, together with a mechanistic CHF closure, are longer-term goals that require an HFE dataset.
+
+\section{Next actions}
+The following are ordered by how much each converts a standing assumption into validated physics.
+\begin{enumerate}
+\item \textbf{Take one 66-tube dataset.} A single sweep on the existing 66-tube condenser validates
+the prediction in Section~\ref{sec:pred66}, fixes its operating-point coefficients, and provides the
+third characterized condenser needed to begin a geometry-based condenser closure. This is the single
+highest-value measurement.
+\item \textbf{Resolve whether CHF is burnout or a surface-temperature ceiling.} The same plain chip
+reaches 114~W/cm$^2$ on the 33-tube and 65 on the 42-tube at comparable subcooling and similar
+surface temperature, which suggests a system limit rather than a local boiling crisis. Settling this
+from the existing records determines whether the 66-tube and HFE CHF values should be inherited,
+raised (lower-resistance condenser reaches a ceiling at higher flux), or modeled mechanistically.
+\item \textbf{Bring in HFE-7000.} When data is available, refit $C_{sf}$ for HFE on copper (expected
+near scored-copper values, with a much lower CHF), recompute the boiling curve, and test whether the
+coolant-side-limited operating-point structure holds for a second fluid. The El-Genk correlations
+give an independent check on the boiling coefficient and the subcooling dependence.
+\item \textbf{Add error bars to the data figures.} With the measurement-uncertainty section now in
+place (Section~\ref{sec:uncertainty}), draw the propagated bands on the boiling-curve and resistance
+figures so the model error can be read directly against the noise floor.
+\item \textbf{Document the physical apparatus.} Add a labeled apparatus schematic, the full
+experimental test matrix, and a thermophysical property table for the working fluids.
+\item \textbf{Develop the geometry-based condenser closure.} Replace the empirical operating-point
+map with an active-area model that returns the coefficients from condenser geometry and liquid fill,
+which is the step that makes the condenser side fully predictive. This requires the 66-tube data and,
+ideally, the fill-ratio sweeps.
+\item \textbf{Strengthen the 42-tube subcooling closure}, currently essentially scatter, and add a
+mechanistic CHF model to remove the last measured anchor.
+\end{enumerate}
+
+\clearpage
+\begin{thebibliography}{99}
+\small
+%-------- Part I references --------
+\bibitem{mudawar2001} Mudawar, I., 2001, ``Assessment of high-heat-flux thermal management schemes,'' \textit{IEEE Trans. Components and Packaging Technologies}, 24(2), pp.~122--141.
+\bibitem{azarifar2024} Azarifar, M., Arik, M., and Chang, J.-Y., 2024, ``Liquid cooling of data centers: A necessity facing challenges,'' \textit{Applied Thermal Engineering}, 247, 123112.
+\bibitem{birbarah2020} Birbarah, P., Gebrael, T., Foulkes, T., et al., 2020, ``Water immersion cooling of high power density electronics,'' \textit{Int.\ J.\ Heat and Mass Transfer}, 147, 118918.
+\bibitem{wu2025} Wu, X., et al., 2025, ``Investigations on heat dissipation performance and overall characteristics of two-phase liquid immersion cooling systems for data center,'' \textit{Int.\ J.\ Heat and Mass Transfer}, 239, 126575.
+\bibitem{mody2022} Mody, F., Chauhan, A., Shukla, M.~Y., and Kandlikar, S.~G., 2022, ``Evaluation of heater size and external enhancement techniques in pool boiling heat transfer with dielectric fluids,'' \textit{Int.\ J.\ Heat and Mass Transfer}, 191, 122857.
+\bibitem{shukla2024} Shukla, M.~Y., and Kandlikar, S.~G., 2024, ``Novel subcooled boiling chamber with submerged condensation for high heat flux removal for data center application,'' \textit{Proc.\ 23rd IEEE Intersociety Conf.\ on Thermal and Thermomechanical Phenomena in Electronic Systems (ITherm)}, Orlando, FL.
+\bibitem{shrigondekar2023} Shrigondekar, H., Lin, Y.-C., and Wang, C.-C., 2023, ``Investigations on performance of single-phase immersion cooling system,'' \textit{Int.\ J.\ Heat and Mass Transfer}, 206, 123961.
+\bibitem{nukiyama1934} Nukiyama, S., 1934, ``The maximum and minimum values of the heat transmitted from metal to boiling water under atmospheric pressure,'' \textit{J.\ Soc.\ Mech.\ Eng.\ Japan}, 37, pp.~367--374 (reprinted \textit{Int.\ J.\ Heat Mass Transfer}, 9, 1966, pp.~1419--1433).
+\bibitem{rohsenow1952} Rohsenow, W.~M., 1952, ``A method of correlating heat transfer data for surface boiling of liquids,'' \textit{Trans.\ ASME}, 74, pp.~969--976.
+\bibitem{vachon1968} Vachon, R.~I., Nix, G.~H., and Tanger, G.~E., 1968, ``Evaluation of constants for the Rohsenow pool-boiling correlation,'' \textit{J.\ Heat Transfer}, 90(2), pp.~239--247.
+\bibitem{mikic1969} Mikic, B.~B., and Rohsenow, W.~M., 1969, ``A new correlation of pool boiling data including the effect of heating surface characteristics,'' \textit{J.\ Heat Transfer}, 91(2), pp.~245--250.
+\bibitem{pioro1999} Pioro, I.~L., 1999, ``Experimental evaluation of constants for the Rohsenow pool boiling correlation,'' \textit{Int.\ J.\ Heat and Mass Transfer}, 42(11), pp.~2003--2013.
+\bibitem{carey2008} Carey, V.~P., 2008, \textit{Liquid--Vapor Phase-Change Phenomena}, 2nd ed., Taylor \& Francis, New York.
+\bibitem{incropera2007} Incropera, F.~P., DeWitt, D.~P., Bergman, T.~L., and Lavine, A.~S., 2007, \textit{Fundamentals of Heat and Mass Transfer}, 6th ed., Wiley, Hoboken, NJ.
+\bibitem{zuber1959} Zuber, N., 1959, ``Hydrodynamic aspects of boiling heat transfer,'' Ph.D.\ dissertation, UCLA / AEC Report AECU-4439.
+\bibitem{kutateladze1948} Kutateladze, S.~S., 1948, ``On the transition to film boiling under natural convection,'' \textit{Kotloturbostroenie}, 3, pp.~10--12.
+\bibitem{lienhard1973} Lienhard, J.~H., and Dhir, V.~K., 1973, ``Extended hydrodynamic theory of the peak and minimum pool boiling heat fluxes,'' NASA CR-2270.
+\bibitem{kandlikar2001} Kandlikar, S.~G., 2001, ``A theoretical model to predict pool boiling CHF incorporating effects of contact angle and orientation,'' \textit{J.\ Heat Transfer}, 123(6), pp.~1071--1079.
+\bibitem{mudawar1997} Mudawar, I., Howard, A.~H., and Gersey, C.~O., 1997, ``An analytical model for near-saturated pool boiling critical heat flux on vertical surfaces,'' \textit{Int.\ J.\ Heat and Mass Transfer}, 40(10), pp.~2327--2339.
+\bibitem{cooke2011} Cooke, D., and Kandlikar, S.~G., 2011, ``Pool boiling heat transfer and bubble dynamics over plain and enhanced microchannels,'' \textit{J.\ Heat Transfer}, 133(5), 052902.
+\bibitem{cooke2012} Cooke, D., and Kandlikar, S.~G., 2012, ``Effect of open microchannel geometry on pool boiling enhancement,'' \textit{Int.\ J.\ Heat and Mass Transfer}, 55(4), pp.~1004--1013.
+\bibitem{elgenk2021a} El-Genk, M.~S., and Pourghasemi, M., 2021, ``Experiments and correlations of saturation boiling of HFE-7000 dielectric liquid on rough inclined copper surfaces,'' \textit{Int.\ J.\ Heat and Mass Transfer}, 164, 120540.
+\bibitem{elgenk2021b} El-Genk, M.~S., and Pourghasemi, M., 2021, ``Subcooled boiling critical heat flux of HFE-7000 dielectric liquid on inclined rough Cu,'' \textit{Int.\ J.\ Heat and Mass Transfer}, 175, 121354.
+\bibitem{jaikumar2015} Jaikumar, A., and Kandlikar, S.~G., 2015, ``Enhanced pool boiling heat transfer mechanisms for selectively sintered open microchannels,'' \textit{Int.\ J.\ Heat and Mass Transfer}, 88, pp.~652--661.
+\bibitem{patil2014} Patil, C.~M., and Kandlikar, S.~G., 2014, ``Pool boiling enhancement through microporous coatings selectively electrodeposited on fin tops of open microchannels,'' \textit{Int.\ J.\ Heat and Mass Transfer}, 79, pp.~816--828.
+\bibitem{jaikumar2016} Jaikumar, A., and Kandlikar, S.~G., 2016, ``Pool boiling enhancement through bubble induced convective liquid flow in feeder microchannels,'' \textit{Applied Physics Letters}, 108(4), 041604.
+\bibitem{nusselt1916} Nusselt, W., 1916, ``Die Oberfl\"achenkondensation des Wasserdampfes,'' \textit{Z.\ Ver.\ Dtsch.\ Ing.}, 60, pp.~541--546, 569--575.
+\bibitem{rose2002} Rose, J.~W., 2002, ``Dropwise condensation theory and experiment: A review,'' \textit{Proc.\ IMechE Part A: J.\ Power and Energy}, 216(2), pp.~115--128.
+\bibitem{collier1994} Collier, J.~G., and Thome, J.~R., 1994, \textit{Convective Boiling and Condensation}, 3rd ed., Oxford University Press, New York.
+\bibitem{hausen1943} Hausen, H., 1943, ``Darstellung des W\"arme\"uberganges in Rohren durch verallgemeinerte Potenzbeziehungen,'' \textit{VDI-Zeitung, Beiheft Verfahrenstechnik}, 4, pp.~91--98.
+\bibitem{shah1978} Shah, R.~K., and London, A.~L., 1978, \textit{Laminar Flow Forced Convection in Ducts}, Academic Press, New York.
+\bibitem{gnielinski1976} Gnielinski, V., 1976, ``New equations for heat and mass transfer in turbulent pipe and channel flow,'' \textit{Int.\ Chemical Engineering}, 16(2), pp.~359--368.
+\bibitem{churchill1975} Churchill, S.~W., and Chu, H.~H.~S., 1975, ``Correlating equations for laminar and turbulent free convection from a vertical plate,'' \textit{Int.\ J.\ Heat and Mass Transfer}, 18(11), pp.~1323--1329.
+\bibitem{faghri1995} Faghri, A., 1995, \textit{Heat Pipe Science and Technology}, Taylor \& Francis, Washington, DC.
+\end{thebibliography}
+
+\end{document}

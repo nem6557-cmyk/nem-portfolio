@@ -1,0 +1,21 @@
+#!/bin/sh
+# Build + solve the STEP-faithful 42-tube manifold (top ports, vertical manifolds).
+cd "${0%/*}" || exit 1
+. "${WM_PROJECT_DIR:?}/bin/tools/RunFunctions"
+W=run42
+rm -rf "$W"; cp -r case "$W"; cp fluid_42_v3.msh "$W"/
+cd "$W"
+runApplication gmshToFoam fluid_42_v3.msh
+runApplication transformPoints -scale '(0.001 0.001 0.001)' \
+  || transformPoints "scale=(0.001 0.001 0.001)" > log.transformPoints 2>&1
+python3 - <<'PY'
+import re
+f="constant/polyMesh/boundary"; s=open(f).read()
+s=re.sub(r'(\bwalls\b\s*\{[^}]*?type\s+)patch', r'\1wall', s, flags=re.S)
+open(f,"w").write(s); print("walls -> wall")
+PY
+runApplication checkMesh
+runApplication simpleFoam
+runApplication foamToVTK -latestTime
+touch case.foam
+echo "done -> run42/  (open case.foam in ParaView, or zip run42/VTK and send back)"

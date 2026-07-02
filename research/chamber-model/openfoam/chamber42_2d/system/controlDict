@@ -1,0 +1,48 @@
+FoamFile { version 2.0; format ascii; class dictionary; object controlDict; }
+application     interCondensatingEvaporatingFoam;
+startFrom       startTime;   startTime 0;   stopAt endTime;
+// Run to quasi-stationarity: watch the chipHeatFlux.dat running mean (post_convergence.py)
+// and raise endTime if q'' has not levelled. 2D is cheap enough to iterate.
+endTime         0.20;
+deltaT          1e-6;
+writeControl    adjustableRunTime;   writeInterval 0.01;
+purgeWrite      0;   writeFormat ascii;   writePrecision 7;   timeFormat general;
+runTimeModifiable yes;
+adjustTimeStep  yes;   maxCo 0.5;   maxAlphaCo 0.5;   maxDeltaT 5e-5;
+functions
+{
+    chipHeatFlux
+    {
+        type            coded;
+        libs            ("libutilityFunctionObjects.so");
+        name            chipHeatFlux;
+        writeControl    timeStep;
+        writeInterval   20;
+        codeInclude
+        #{
+            #include <fstream>
+        #};
+        codeWrite
+        #{
+            const volScalarField& T = mesh().lookupObject<volScalarField>("T");
+            const volScalarField& a = mesh().lookupObject<volScalarField>("alpha.water");
+            const scalar kw = 0.66, kv = 0.025;             // water / vapour kappa [W/m/K]
+            const label patchI = mesh().boundaryMesh().findPatchID("chip");
+            if (patchI < 0) return true;
+            const fvPatch& p = mesh().boundary()[patchI];
+            scalarField kappaEff =
+                a.boundaryField()[patchI]*kw + (1.0 - a.boundaryField()[patchI])*kv;
+            scalarField qpp = kappaEff*T.boundaryField()[patchI].snGrad();   // W/m^2 into wall
+            scalar A = gSum(p.magSf());
+            scalar Q = gSum(qpp*p.magSf());
+            scalar qmean = (A > 0 ? Q/A : 0.0);
+            if (Pstream::master())
+            {
+                fileName fn = mesh().time().path()/"chipHeatFlux.dat";
+                std::ofstream os(fn.c_str(), std::ios::app);
+                os << mesh().time().value() << '\t' << qmean << '\t'
+                   << (qmean*1e-4) << '\t' << Q << '\n';   // time  q[W/m2]  q[W/cm2]  Q[W]
+            }
+        #};
+    }
+}

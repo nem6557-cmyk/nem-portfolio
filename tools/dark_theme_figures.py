@@ -40,4 +40,4 @@ def dark(src, dst):
 
 import sys
 for name in sys.argv[1:]:
-    dark(f"site/assets/{name}"  # run from repo root, f"site/assets/{name}")
+    dark(f"site/assets/{name}", f"site/assets/{name}")  # run from repo root

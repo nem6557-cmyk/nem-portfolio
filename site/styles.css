@@ -796,3 +796,39 @@ table.data tr:last-child td { border-bottom: none; }
 
 /* grid children guard: prevents long content from blowing out columns */
 .hero-text, .hero-media, .project-body, .project-media { min-width: 0; }
+
+/* domain cards on the index */
+.domain-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.domain {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 26px 26px 22px;
+  transition: border-color 0.2s ease, transform 0.18s ease, background 0.2s ease;
+}
+.domain:hover {
+  border-color: color-mix(in srgb, var(--sim) 45%, var(--line));
+  background: var(--surface);
+  transform: translateY(-2px);
+}
+.domain .d-kicker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--sim);
+}
+.domain:nth-child(2) .d-kicker { color: var(--warn); }
+.domain:nth-child(3) .d-kicker { color: var(--real); }
+.domain h3 { font-size: 17.5px; margin: 0; letter-spacing: -0.015em; }
+.domain p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.55; flex: 1; }
+.domain .d-cta { font-weight: 600; font-size: 13.5px; color: var(--sim); }
+@media (max-width: 900px) { .domain-grid { grid-template-columns: 1fr; } }

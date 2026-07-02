@@ -1,0 +1,5 @@
+configuration,R_tot_exp,R_tot_model,R_chip_exp,R_cond_exp
+"33-tube, plain",78.9,80.5,64.4,13.7
+"33-tube, microchannel",33.1,44.1,17.3,15.1
+"42-tube, plain",148.2,161.9,75.1,74.0
+"42-tube, microchannel",77.1,78.7,31.9,41.1

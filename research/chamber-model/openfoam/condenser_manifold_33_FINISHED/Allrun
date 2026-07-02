@@ -1,0 +1,17 @@
+#!/bin/sh
+cd "${0%/*}" || exit 1
+. "${WM_PROJECT_DIR:?}/bin/tools/RunFunctions"
+runApplication gmshToFoam fluid_33_AXIAL.msh
+runApplication transformPoints -scale '(0.001 0.001 0.001)' \
+  || transformPoints "scale=(0.001 0.001 0.001)" > log.transformPoints 2>&1
+python3 - <<'PY'
+import re
+f="constant/polyMesh/boundary"; s=open(f).read()
+s=re.sub(r'(\bwalls\b\s*\{[^}]*?type\s+)patch', r'\1wall', s, flags=re.S)
+open(f,"w").write(s); print("walls -> type wall")
+PY
+runApplication checkMesh
+runApplication simpleFoam
+runApplication foamToVTK -latestTime
+touch case.foam
+echo "done. open case.foam in ParaView, or see VTK/ and figures/"

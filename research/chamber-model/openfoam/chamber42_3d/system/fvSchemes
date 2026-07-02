@@ -1,0 +1,10 @@
+FoamFile { version 2.0; format ascii; class dictionary; object fvSchemes; }
+ddtSchemes { default Euler; }
+gradSchemes { default Gauss linear; }
+divSchemes { div(rhoPhi,U) Gauss linearUpwind grad(U); "div(phi,alpha)" Gauss vanLeer;
+   "div(phirb,alpha)" Gauss linear; div(((rho*nuEff)*dev2(T(grad(U))))) Gauss linear;
+   div(rhoPhi,T) Gauss linearUpwind grad(T); div((interpolate(cp)*rhoPhi),T) Gauss linearUpwind grad(T);
+   div(rhoCpPhi,T) Gauss linearUpwind grad(T); default none; }
+laplacianSchemes { default Gauss linear corrected; }
+interpolationSchemes { default linear; }
+snGradSchemes { default corrected; }

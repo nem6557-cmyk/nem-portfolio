@@ -1,0 +1,13 @@
+FoamFile { version 2.0; format ascii; class dictionary; object controlDict; }
+application     simpleFoam;
+startFrom       startTime;  startTime 0;  stopAt endTime;  endTime 2500;
+deltaT          1;  writeControl timeStep;  writeInterval 500;
+purgeWrite      0;  writeFormat ascii;  writePrecision 7;  runTimeModifiable yes;
+functions
+{
+    // mass-flow through inlet/outlet to watch convergence + check conservation
+    inletFlux  { type surfaceFieldValue; libs ("libfieldFunctionObjects.so");
+        operation sum; fields (phi); writeFields false; regionType patch; name inlet;  writeControl timeStep; writeInterval 100; log true; }
+    outletFlux { type surfaceFieldValue; libs ("libfieldFunctionObjects.so");
+        operation sum; fields (phi); writeFields false; regionType patch; name outlet; writeControl timeStep; writeInterval 100; log true; }
+}

@@ -1,0 +1,35 @@
+FoamFile { version 2.0; format ascii; class dictionary; object snappyHexMeshDict; }
+// CLUSTER-READY refined mesh: surface refinement + feature snapping + prism layers.
+// Tuned for ~0.1-0.3 mm near the tubes and chip. On 1 core this is hours to build and
+// will not fit interactive limits; raise/lower levels and maxGlobalCells to taste on HPC.
+// A coarser snapped variant (level (1 2)) was verified here: 299656 cells, checkMesh OK.
+castellatedMesh true; snap true; addLayers true;
+geometry
+{
+    tubes.stl { type triSurfaceMesh; name condenser; }
+    chipBox   { type searchableBox; min (0.02275 0.024 0.0);  max (0.05725 0.056 0.004); }
+    bundleBox { type searchableBox; min (0.012  0.008 0.006); max (0.068  0.072 0.024);  }
+}
+castellatedMeshControls
+{
+    maxLocalCells 8000000; maxGlobalCells 6000000; minRefinementCells 10; nCellsBetweenLevels 3;
+    features ( { file "tubes.eMesh"; level 4; } );          // ~0.125 mm at edges
+    refinementSurfaces { condenser { level (3 4); patchInfo { type wall; } } }  // 0.125-0.25 mm
+    resolveFeatureAngle 30;
+    refinementRegions
+    {
+        chipBox   { mode inside; levels ((1e15 4)); }       // ~0.125 mm above the chip
+        bundleBox { mode inside; levels ((1e15 3)); }       // ~0.25 mm around the bundle/interface
+    }
+    locationInMesh (0.005 0.005 0.005); allowFreeStandingZoneFaces true;
+}
+snapControls { nSmoothPatch 3; tolerance 2.0; nSolveIter 100; nRelaxIter 5;
+    nFeatureSnapIter 10; implicitFeatureSnap false; explicitFeatureSnap true; multiRegionFeatureSnap false; }
+addLayersControls { relativeSizes true; layers { condenser { nSurfaceLayers 5; } floor { nSurfaceLayers 5; } }
+    expansionRatio 1.2; finalLayerThickness 0.4; minThickness 0.1; nGrow 0; featureAngle 130; slipFeatureAngle 30;
+    nRelaxIter 5; nSmoothSurfaceNormals 1; nSmoothNormals 3; nSmoothThickness 10; maxFaceThicknessRatio 0.5;
+    maxThicknessToMedialRatio 0.3; minMedialAxisAngle 90; nBufferCellsNoExtrude 0; nLayerIter 50; nRelaxedIter 20; }
+meshQualityControls { maxNonOrtho 65; maxBoundarySkewness 20; maxInternalSkewness 4; maxConcave 80;
+    minVol 1e-13; minTetQuality 1e-15; minArea -1; minTwist 0.02; minDeterminant 0.001; minFaceWeight 0.05;
+    minVolRatio 0.01; minTriangleTwist -1; nSmoothScale 4; errorReduction 0.75; }
+mergeTolerance 1e-6; debug 0;

@@ -1,0 +1,13 @@
+group,constant,value_33tube,value_42tube
+evaporator,Csf_plain,0.0131,0.0131
+evaporator,Csf_microchannel,0.0067,0.0067
+evaporator,area_augmentation_Ar,2.17,2.17
+evaporator,single_phase_factor_Fnc,9.0,3.5
+CHF,qCHF_plain_Wcm2,114,65
+CHF,microchannel_increment_dqCHF_Wcm2,+60,+60
+operating_Tsat,a_coolant_gain,0.262,0.710
+operating_Tsat,b_K_per_W,5.99e-3,2.41e-2
+operating_Tsat,c_K,44.8,33.1
+subcooling,d,-0.639,-0.217
+subcooling,e_K_per_W,-6.80e-3,-7.01e-4
+subcooling,f_K,40.8,19.6

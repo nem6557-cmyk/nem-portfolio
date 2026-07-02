@@ -1,0 +1,17 @@
+#!/bin/sh
+#SBATCH -J chamber42         # adjust to your scheduler/account/partition
+#SBATCH -N 1
+#SBATCH --ntasks-per-node 32
+#SBATCH -t 24:00:00
+set -e
+. $WM_PROJECT_DIR/etc/bashrc 2>/dev/null || true
+blockMesh
+surfaceFeatureExtract
+snappyHexMesh -overwrite
+topoSet
+createPatch -overwrite
+setFields
+decomposePar
+mpirun -np 32 interCondensatingEvaporatingFoam -parallel
+reconstructPar
+foamToVTK

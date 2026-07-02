@@ -1,0 +1,22 @@
+\begin{table}[t]
+\centering
+\caption{Predictive accuracy of the gray-box model for the chip surface
+temperature. Predictions use the full geometry-to-temperature chain with
+fitted, geometry-independent boiling coefficients; no per-point tuning.
+RMSE, MAE and maximum absolute error are in kelvin; bias is the signed mean
+residual. The leave-one-coolant-out (LOCO) column is the held-out RMSE when an
+entire coolant-inlet condition is withheld from the calibration.}
+\label{tab:accuracy}
+\begin{tabular}{lrrrrrrr}
+\toprule
+Configuration & $n$ & RMSE & MAE & $\max|e|$ & bias & $R^2$ & LOCO \\
+\midrule
+33-tube, plain copper & 87 & 3.14 & 2.59 & 8.44 & -0.99 & 0.964 & 4.15 \\
+33-tube, microchannel & 36 & 4.82 & 3.85 & 10.19 & +0.88 & 0.867 & 6.29 \\
+42-tube, plain copper & 64 & 4.42 & 3.36 & 8.14 & +2.00 & 0.900 & 7.85 \\
+42-tube, microchannel & 74 & 5.17 & 4.47 & 10.60 & +2.16 & 0.927 & 10.04 \\
+\midrule
+\textbf{All data} & 261 & 4.34 & 3.48 & 10.60 & +0.89 & 0.938 & -- \\
+\bottomrule
+\end{tabular}
+\end{table}

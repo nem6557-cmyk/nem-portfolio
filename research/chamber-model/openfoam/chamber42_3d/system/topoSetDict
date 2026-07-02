@@ -1,0 +1,5 @@
+FoamFile { version 2.0; format ascii; class dictionary; object topoSetDict; }
+actions (
+  { name chipFaces; type faceSet; action new; source patchToFace; sourceInfo { patch floor; } }
+  { name chipFaces; type faceSet; action subset; source boxToFace; sourceInfo { box (0.02275 0.024 -0.001)(0.05725 0.056 0.001); } }
+);

@@ -1,0 +1,5 @@
+mesh,construction,cells,notes
+background,blockMesh,33600,~2 mm
+demonstration,castellation-only,74044,"staircased, robust"
+verified snapped,snap level (1 2),299656,"checkMesh OK, skew 1.57"
+production target,shipped dict,~few x 10^6,"0.1-0.3 mm, snap + layers"

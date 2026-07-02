@@ -1,0 +1,4 @@
+FoamFile { version 2.0; format ascii; class dictionary; object thermophysicalProperties; }
+// 42-tube / plain / 20 C coolant operating point: measured chamber Tsat ~= 49 C
+TSat            TSat [0 0 0 1 0 0 0] 322;
+pDivU           false;

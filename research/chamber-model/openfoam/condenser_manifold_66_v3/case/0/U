@@ -1,0 +1,9 @@
+FoamFile { version 2.0; format ascii; class volVectorField; object U; }
+dimensions [0 1 -1 0 0 0 0];
+internalField uniform (0 0 0);
+boundaryField
+{
+    inlet   { type flowRateInletVelocity; volumetricFlowRate 6.6667e-05; }  // 4 L/min in m^3/s
+    outlet  { type pressureInletOutletVelocity; value uniform (0 0 0); }
+    walls   { type noSlip; }
+}

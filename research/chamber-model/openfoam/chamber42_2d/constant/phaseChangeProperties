@@ -1,0 +1,7 @@
+FoamFile { version 2.0; format ascii; class dictionary; object phaseChangeProperties; }
+phaseChangeTwoPhaseModel constant;
+constantCoeffs
+{
+    coeffC  coeffC [0 0 -1 -1 0 0 0] 1.0;   // condensation rate coefficient
+    coeffE  coeffE [0 0 -1 -1 0 0 0] 0.1;   // evaporation rate coefficient (primary boiling knob)
+}

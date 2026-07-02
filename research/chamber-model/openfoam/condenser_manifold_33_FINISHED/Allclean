@@ -1,0 +1,4 @@
+#!/bin/sh
+cd "${0%/*}" || exit 1
+rm -rf [1-9]* 0.[0-9]* processor* postProcessing VTK constant/polyMesh log.* case.foam
+echo "cleaned (kept 0/, constant/ dicts, system/, mesh, figures)"

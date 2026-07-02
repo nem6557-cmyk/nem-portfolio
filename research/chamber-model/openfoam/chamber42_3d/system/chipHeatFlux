@@ -1,0 +1,28 @@
+// Coded functionObject: chip-patch-integrated conductive heat flux q'' [W/m^2] and Q [W].
+// Phase-weighted conductivity kappaEff = alpha*kappa_water + (1-alpha)*kappa_vapour.
+// NOTE: confirm field names / kappa values against your transportProperties on the cluster;
+// this could not be compile-tested in the build sandbox.
+chipHeatFlux
+{
+    type coded; libs ("libutilityFunctionObjects.so"); name chipHeatFlux;
+    writeControl timeStep; writeInterval 20;
+    codeWrite
+    #{
+        const volScalarField& T = mesh().lookupObject<volScalarField>("T");
+        const volScalarField& a = mesh().lookupObject<volScalarField>("alpha.water");
+        const scalar kw = 0.66, kv = 0.025;            // water / vapour kappa [W/m/K]
+        const label patchI = mesh().boundaryMesh().findPatchID("chip");
+        if (patchI < 0) return true;
+        const fvPatch& p = mesh().boundary()[patchI];
+        scalarField kappaEff = a.boundaryField()[patchI]*kw + (1.0 - a.boundaryField()[patchI])*kv;
+        scalarField qpp = kappaEff*T.boundaryField()[patchI].snGrad();   // W/m^2 (into wall)
+        scalar A = gSum(p.magSf());
+        scalar Q = gSum(qpp*p.magSf());                                  // W
+        scalar qmean = (A > 0 ? Q/A : 0.0);
+        if (Pstream::master())
+        {
+            OFstream os(mesh().time().path()/"chipHeatFlux.dat", IOstream::ASCII, IOstream::currentVersion, IOstream::APPEND);
+            os << mesh().time().timeName() << tab << qmean << tab << (qmean*1e-4) << tab << Q << endl; // q[W/m2], q[W/cm2], Q[W]
+        }
+    #};
+}

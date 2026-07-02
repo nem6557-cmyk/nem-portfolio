@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0B1220">
+<title>Boiling Chamber Experiments - Nooruldeen Mustafa</title>
+<meta name="description" content="Subcooled pool boiling experiments on a patented 1U chamber: water at 12 kPa to 195.3 W/cm2, the highest reported HFE-7000 CHF above 1 cm2, and the coolant-temperature coupling that governs both.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html" aria-label="Home">
+      <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
+        <line x1="8" y1="12" x2="20" y2="12" stroke="#4FD1C5" stroke-width="2.4" stroke-linecap="round"/>
+        <line x1="20" y1="12" x2="25" y2="22" stroke="#FF8A5B" stroke-width="2.4" stroke-linecap="round"/>
+        <circle cx="8" cy="12" r="3" fill="#0B1220" stroke="#4FD1C5" stroke-width="2.4"/>
+        <circle cx="20" cy="12" r="2.6" fill="#0B1220" stroke="#E8EDF4" stroke-width="2.2"/>
+        <circle cx="25" cy="22" r="2.6" fill="#FF8A5B"/>
+      </svg>
+      Nooruldeen Mustafa
+    </a>
+    <button class="nav-toggle" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5h14M2 9h14M2 13h14"/></svg>
+    </button>
+    <nav class="nav-links">
+      <a href="research.html">research</a>
+      <a href="index.html#projects">projects</a>
+      <a href="software.html">software</a>
+      <a href="index.html#about">about</a>
+      <a class="gh" href="https://github.com/nem6557-cmyk/nem-portfolio" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<section class="doc-hero wrap">
+  <a class="back" href="research.html">&larr; Research overview</a>
+  <span class="eyebrow real">Research &middot; Experiments</span>
+  <h1>Two fluids, one chamber, and the ceiling of passive cooling</h1>
+  <p class="lede">The experimental core of the dissertation: de-ionized water at 12 kPa and 3M Novec 7000 at 1 atm, boiled on identical 11.04 cm&sup2; microchannel copper substrates inside a sealed 1U chamber with a submerged finned-tube condenser. Four channel widths, a dual-taper microgap manifold, four coolant temperatures, and a formal uncertainty analysis under every number. In press at the ASME Journal of Heat and Mass Transfer.</p>
+  <div class="tags"><span class="tag">Water at 12 kPa</span><span class="tag">Novec 7000</span><span class="tag">Taper microgap</span><span class="tag">CHF</span><span class="tag">High-speed visualization</span><span class="tag">Uncertainty analysis</span></div>
+  <div class="readout-bar"><div class="cell real"><div class="val">195.3 W/cm&sup2;</div><div class="lbl">WATER CHF, 45 C COOLANT</div></div><div class="cell real"><div class="val">66 W/cm&sup2;</div><div class="lbl">HFE-7000, HIGHEST &gt;1 cm&sup2;</div></div><div class="cell"><div class="val">0.012 K/W</div><div class="lbl">MINIMUM TOTAL RESISTANCE</div></div><div class="cell"><div class="val">3.6&ndash;5.0&times;</div><div class="lbl">WATER-TO-NOVEC CHF RATIO</div></div></div>
+</section>
+
+<div class="wrap">
+<div class="doc" id="main">
+
+  <section class="doc-section">
+    <h2>The apparatus</h2>
+    <p>The chamber is a sealed 70 by 85 mm unit, under 50.8 mm tall with the lid bolted, that sits directly on the processor's heat spreader; its design is protected by U.S. Patent 12,349,313 B2, assigned to RIT. Inside, 28 finned condenser tubes provide 48,440 mm&sup2; of condensing area fed by facility coolant at 4.75 kg/min. The test substrates are copper 101, 55 by 55 by 1 mm with a 34.5 by 32 mm active boiling area, machined with parallel open microchannels at widths of 381, 500, 762, and 1000 &mu;m, all 400 &mu;m deep with 250 &mu;m fins. The dual-taper microgap manifold sits above the substrate at a 7 degree angle with a 2 mm inlet gap: bubbles nucleating at the narrow inlet get squeezed by the converging geometry toward the wider outlet, pumping fresh subcooled liquid across the surface with no external actuation.</p>
+    <p>Heat flux comes from Fourier conduction across three calibrated thermocouples in the heater block, with a Taylor backward-difference gradient and a Kline&ndash;McClintock uncertainty propagation: heat flux to &plusmn;2.14 W/cm&sup2; and surface temperature to &plusmn;1.06 &deg;C, with every experiment repeated and agreeing within 5%. Water runs at 12 kPa, where it saturates near 49 &deg;C; Novec 7000 runs at 1 atm because its 12 kPa saturation temperature of roughly minus 12 &deg;C is useless for electronics.</p>
+  </section>
+
+  <section class="doc-section">
+    <h2>What the taper does, and to whom</h2>
+    <p>The taper was expected to help both fluids. It did not, and the asymmetry is the paper's most interesting result. For Novec 7000, the taper raised CHF on every channel width, 18 to 39%, peaking at 51.4 W/cm&sup2; on the 762 &mu;m substrate, because Novec's low surface tension makes small bubbles the taper can squeeze. For water, whose surface tension is 5.5 times higher, departure diameters outgrow the 2 mm gap; bubbles coalesce inside the taper into vapor slugs that choke liquid return, and CHF falls from 185.3 to 125.5 W/cm&sup2; on the 381 &mu;m substrate. Same geometry, opposite outcome, and the high-speed imaging shows both mechanisms directly.</p>
+    <figure><div class="figure"><img src="assets/r-chf-summary.png" width="1440" height="600" loading="lazy" decoding="async" alt="Bar charts of CHF for water and Novec 7000 across four microchannel widths, with and without the taper manifold"></div><figcaption>CHF at 20 &deg;C coolant across all configurations, from Table 7 of the paper. The taper helps the dielectric on every width and hurts water on every width; one manifold geometry cannot serve both fluids.</figcaption></figure>
+    <p>Channel width has its own physics. The optimum shifted from 762 &mu;m for Novec to 381 &mu;m for water, tracking the Bond number: water's larger bubbles want the stronger capillary confinement of narrow channels, while Novec's small bubbles escape narrow channels freely. The 500 &mu;m width underperformed for both fluids, sitting in the transitional regime where confinement is strong enough to trap vapor but too weak to drive capillary pumping.</p>
+  </section>
+
+  <section class="doc-section">
+    <h2>The coolant-temperature coupling</h2>
+    <p>In a sealed chamber, coolant temperature, pool subcooling, and internal pressure are one knob, not three. Raising the coolant from 20 to 45 &deg;C cut pool subcooling, let bubbles survive to the condenser instead of collapsing in the pool, raised internal pressure and with it vapor density, and shifted the bubble population toward smaller, more frequent departures. Water CHF climbed 56%, from 125.5 to 195.3 W/cm&sup2;. At 50 &deg;C the condenser ran out of driving temperature difference, vapor blanketed the tubes, and CHF fell back to 136.8. The same pressure-driven mechanism took Novec 7000 from 51.4 to approximately 66 W/cm&sup2; at 40 &deg;C coolant, the highest CHF reported for HFE-7000 on any surface above 1 cm&sup2;.</p>
+    <figure><div class="figure"><img src="assets/r-coolant-study.png" width="1020" height="600" loading="lazy" decoding="async" alt="CHF versus coolant inlet temperature for water and Novec 7000, peaking at 45 C for water before condenser saturation"></div><figcaption>The optimum sits near 45 &deg;C, inside the ASHRAE W4/W5 warm-water classes modern data centers already supply. Peak performance on facility water that already exists is the practical headline.</figcaption></figure>
+  </section>
+
+  <section class="doc-section">
+    <h2>What it means at system level</h2>
+    <p>At 195.3 W/cm&sup2; on 11.04 cm&sup2;, the chamber dissipates roughly 2156 W from a single substrate, above the TDP of every current and announced GPU, including 1400 W Blackwell-class parts, while operating as a fully passive thermosiphon on the refrigerant side inside a 1U envelope. Surface temperatures at CHF stayed moderate, 49 &deg;C for Novec at 20 &deg;C coolant and 77.9 &deg;C for water at 45 &deg;C, both under the 85 to 105 &deg;C junction limits of current processors. And because the working fluid is hermetically sealed and the facility side can reject heat through a dry cooler, the design eliminates cooling-tower evaporation, roughly 790,000 liters of water per year for a 50 kW rack.</p>
+    <div class="callout">
+      <span class="tag-lbl">Honest scope</span>
+      <p>The taper geometry used here was optimized for dielectric-scale bubbles; the water result makes clear a single taper cannot serve both fluids, and gap-height optimization for water is stated future work. Novec values above 51.4 W/cm&sup2; come from the 40 &deg;C coolant condition, and all comparisons are at the stated coolant temperatures, not a universal rating.</p>
+    </div>
+  </section>
+
+</div>
+</div>
+
+<nav class="wrap next-nav">
+  <a href="research.html">&larr; Research overview</a>
+  <a href="research-model.html">Next: The model &rarr;</a>
+</nav>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="colophon">
+      <span>Experimental results in press, ASME J. Heat Mass Transfer, DOI 10.1115/1.4072138.</span>
+      <span>&copy; <span id="year">2026</span> Nooruldeen Mustafa</span>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>

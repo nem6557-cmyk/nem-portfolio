@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0B1220">
+<title>Reduced-Order Chamber Model - Nooruldeen Mustafa</title>
+<meta name="description" content="A gray-box thermal model of the boiling chamber validated against 261 measured points across two chamber generations: RMSE 4.34 K, R2 0.938, with parity, residual, and per-configuration breakdowns.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html" aria-label="Home">
+      <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
+        <line x1="8" y1="12" x2="20" y2="12" stroke="#4FD1C5" stroke-width="2.4" stroke-linecap="round"/>
+        <line x1="20" y1="12" x2="25" y2="22" stroke="#FF8A5B" stroke-width="2.4" stroke-linecap="round"/>
+        <circle cx="8" cy="12" r="3" fill="#0B1220" stroke="#4FD1C5" stroke-width="2.4"/>
+        <circle cx="20" cy="12" r="2.6" fill="#0B1220" stroke="#E8EDF4" stroke-width="2.2"/>
+        <circle cx="25" cy="22" r="2.6" fill="#FF8A5B"/>
+      </svg>
+      Nooruldeen Mustafa
+    </a>
+    <button class="nav-toggle" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5h14M2 9h14M2 13h14"/></svg>
+    </button>
+    <nav class="nav-links">
+      <a href="research.html">research</a>
+      <a href="index.html#projects">projects</a>
+      <a href="software.html">software</a>
+      <a href="index.html#about">about</a>
+      <a class="gh" href="https://github.com/nem6557-cmyk/nem-portfolio" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<section class="doc-hero wrap">
+  <a class="back" href="research.html">&larr; Research overview</a>
+  <span class="eyebrow real">Research &middot; Reduced-order model</span>
+  <h1>A model you can check: 261 points, 4.3 kelvin</h1>
+  <p class="lede">Experiments tell you what one chamber did; a validated model tells you what the next one will do. This is a gray-box thermal network of the sealed chamber, physics where the physics is known and calibrated closures where it is not, that predicts chip temperature from geometry, coolant condition, and heat flux. Its worth is measured the only way that counts: against 261 experimental points it must explain.</p>
+  <div class="tags"><span class="tag">Gray-box modeling</span><span class="tag">Thermal network</span><span class="tag">Calibration</span><span class="tag">Cross-validation</span><span class="tag">Python</span><span class="tag">Preprint</span></div>
+  <div class="readout-bar"><div class="cell real"><div class="val">R&sup2; 0.938</div><div class="lbl">261 MEASURED POINTS</div></div><div class="cell real"><div class="val">4.34 K</div><div class="lbl">RMSE, CHIP TEMPERATURE</div></div><div class="cell"><div class="val">74%</div><div class="lbl">POINTS WITHIN 5 K</div></div><div class="cell"><div class="val">+0.89 K</div><div class="lbl">OVERALL BIAS</div></div></div>
+</section>
+
+<div class="wrap">
+<div class="doc" id="main">
+
+  <section class="doc-section">
+    <h2>The model</h2>
+    <p>The chamber reduces to a thermal network from chip to facility coolant: conduction through the substrate, nucleate boiling at the enhanced surface through a calibrated Rohsenow-family closure with surface constants fit per surface type, saturation conditions set by the sealed-chamber pressure coupling, and condensation on the finned tube bundle to the coolant. The gray-box philosophy is strict about which parameters are physics and which are fit: fluid properties, geometry, and energy balances are physics; the handful of empirical constants are calibrated on a subset of the data and then frozen. The map below is the whole model on one page.</p>
+    <figure><div class="figure"><img src="assets/r-model-map.png" width="2662" height="1729" loading="lazy" decoding="async" alt="Block map of the reduced-order chamber model showing physics blocks and calibrated closures"></div><figcaption>The model map: white-box physics, calibrated closures, and where each measured quantity enters. Calibrated surface constants land close to handbook Rohsenow values, which is the sanity check a fit parameter owes you.</figcaption></figure>
+  </section>
+
+  <section class="doc-section">
+    <h2>Validation against everything measured</h2>
+    <p>The test set is every steady-state point from two chamber generations and two surface types, 261 in all, spanning 33-tube and 42-tube condensers, plain and microchannel substrates, and coolant temperatures from 20 to 50 &deg;C. Overall: RMSE 4.34 K, MAE 3.48 K, R&sup2; 0.938, bias +0.89 K, with 74% of predictions within 5 K of measurement.</p>
+    <figure><div class="figure"><img src="assets/r-parity.png" width="1125" height="1125" loading="lazy" decoding="async" alt="Parity plot of predicted versus measured chip temperature with a 5 K band"></div><figcaption>Predicted versus measured chip temperature. The 33-tube configurations sit tightest; the 42-tube runs carry a +2 K bias the cross-validation had already flagged.</figcaption></figure>
+    <table class="data">
+      <thead><tr><th>Configuration</th><th class="mono">N</th><th class="mono">RMSE (K)</th><th class="mono">Bias (K)</th><th class="mono">R&sup2;</th><th class="mono">Within 5 K</th></tr></thead>
+      <tbody>
+        <tr><td>33-tube, plain</td><td class="mono">87</td><td class="mono"><span class="t-real">3.14</span></td><td class="mono">-0.99</td><td class="mono">0.964</td><td class="mono">91%</td></tr>
+        <tr><td>33-tube, microchannel</td><td class="mono">36</td><td class="mono">4.82</td><td class="mono">+0.88</td><td class="mono">0.867</td><td class="mono">67%</td></tr>
+        <tr><td>42-tube, plain</td><td class="mono">64</td><td class="mono">4.42</td><td class="mono">+2.00</td><td class="mono">0.900</td><td class="mono">66%</td></tr>
+        <tr><td>42-tube, microchannel</td><td class="mono">74</td><td class="mono">5.17</td><td class="mono">+2.16</td><td class="mono">0.927</td><td class="mono">65%</td></tr>
+      </tbody>
+    </table>
+    <figure><div class="figure"><img src="assets/r-boiling-mve.png" width="2100" height="1650" loading="lazy" decoding="async" alt="Boiling curves, measured versus model, per configuration and coolant temperature"></div><figcaption>Measured (filled) against model (open) boiling curves per configuration and coolant temperature. The model captures the coolant-temperature family structure, which is the behavior the experiments identified as the governing coupling.</figcaption></figure>
+    <figure><div class="figure"><img src="assets/r-residuals.png" width="2100" height="750" loading="lazy" decoding="async" alt="Residuals versus heat flux and residual distribution"></div><figcaption>Residuals carry no trend with heat flux, and the distribution is centered with sigma 4.25 K. Warmer-coolant points fit best; the bias flips sign as coolant warms, which points at the condensation closure as the next refinement.</figcaption></figure>
+  </section>
+
+  <section class="doc-section">
+    <h2>Honest scope</h2>
+    <p>These are in-sample statistics on the validated configurations; the model's 66-tube and HFE-7000 outputs are forecasts with no data behind them yet, and are labeled that way everywhere they appear. Leave-one-coolant-out cross-validation showed the 33-tube generation generalizes better than the 42-tube, which is written into the manuscript rather than smoothed over. The full write-up, Part I of the two-paper set, is hosted here as a preprint.</p>
+    <p><a class="btn btn-ghost" href="assets/docs/mustafa_chamber_model_part1_preprint.pdf">Download Part I preprint (PDF, 27 pp.)</a></p>
+  </section>
+
+</div>
+</div>
+
+<nav class="wrap next-nav">
+  <a href="research-chamber.html">&larr; The experiments</a>
+  <a href="research-cfd.html">Next: The CFD program &rarr;</a>
+</nav>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="colophon">
+      <span>Model code and data in research/chamber-model on GitHub &middot; preprint below.</span>
+      <span>&copy; <span id="year">2026</span> Nooruldeen Mustafa</span>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>

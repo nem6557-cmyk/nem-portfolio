@@ -1,0 +1,14 @@
+#!/bin/sh
+# Source your OpenFOAM environment first, e.g.:
+#   . /opt/openfoam/etc/bashrc      (or your install's bashrc)
+# This case was built and run with OpenFOAM v1912 (interCondensatingEvaporatingFoam).
+set -e
+blockMesh
+surfaceFeatureExtract
+snappyHexMesh -overwrite          # castellation only (snap=false): staircased, stable for VOF
+topoSet                           # select chip faces on the floor
+createPatch -overwrite            # split them into the 'chip' patch
+setFields                         # 40% liquid fill (z < 16.8 mm)
+interCondensatingEvaporatingFoam  # 3D VOF + phase change
+foamToVTK                         # optional: ParaView output
+echo "Done. Post-process with:  xvfb-run -a python3 postprocess_3d.py . post"

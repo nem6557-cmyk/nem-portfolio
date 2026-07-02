@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0B1220">
+<title>OpenFOAM CFD Program - Nooruldeen Mustafa</title>
+<meta name="description" content="The OpenFOAM arm of the dissertation: a three-generation condenser manifold flow study finding distribution is governed by feed geometry, and a calibrated 2D/3D VOF phase-change framework for the boiling chamber.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html" aria-label="Home">
+      <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
+        <line x1="8" y1="12" x2="20" y2="12" stroke="#4FD1C5" stroke-width="2.4" stroke-linecap="round"/>
+        <line x1="20" y1="12" x2="25" y2="22" stroke="#FF8A5B" stroke-width="2.4" stroke-linecap="round"/>
+        <circle cx="8" cy="12" r="3" fill="#0B1220" stroke="#4FD1C5" stroke-width="2.4"/>
+        <circle cx="20" cy="12" r="2.6" fill="#0B1220" stroke="#E8EDF4" stroke-width="2.2"/>
+        <circle cx="25" cy="22" r="2.6" fill="#FF8A5B"/>
+      </svg>
+      Nooruldeen Mustafa
+    </a>
+    <button class="nav-toggle" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5h14M2 9h14M2 13h14"/></svg>
+    </button>
+    <nav class="nav-links">
+      <a href="research.html">research</a>
+      <a href="index.html#projects">projects</a>
+      <a href="software.html">software</a>
+      <a href="index.html#about">about</a>
+      <a class="gh" href="https://github.com/nem6557-cmyk/nem-portfolio" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<section class="doc-hero wrap">
+  <a class="back" href="research.html">&larr; Research overview</a>
+  <span class="eyebrow real">Research &middot; OpenFOAM</span>
+  <h1>CFD that admits what it has not yet earned</h1>
+  <p class="lede">Two OpenFOAM campaigns support the chamber work. The first asks a design question the experiments could not isolate: how evenly do three condenser manifold generations feed their tube bundles? The second builds a volume-of-fluid phase-change framework for the chamber itself, calibrated on measured boiling curves, and presented under a strict integrity standard: no unconverged field is ever shown as a result.</p>
+  <div class="tags"><span class="tag">OpenFOAM</span><span class="tag">simpleFoam</span><span class="tag">VOF phase change</span><span class="tag">Lee model</span><span class="tag">snappyHexMesh</span><span class="tag">ParaView</span></div>
+  <div class="readout-bar"><div class="cell real"><div class="val">CoV 10%</div><div class="lbl">42-TUBE DISTRIBUTION</div></div><div class="cell real"><div class="val">3</div><div class="lbl">MANIFOLD GENERATIONS</div></div><div class="cell"><div class="val">2D + 3D</div><div class="lbl">VOF PHASE-CHANGE CASES</div></div><div class="cell"><div class="val">28</div><div class="lbl">PARALLEL CONDENSER TUBES</div></div></div>
+</section>
+
+<div class="wrap">
+<div class="doc" id="main">
+
+  <section class="doc-section">
+    <h2>The manifold question</h2>
+    <p>A submerged condenser only works if coolant actually reaches all of its tubes. Three chamber generations used three feed designs, and single-phase conjugate simulations of each, meshed from the as-built geometry, answer how evenly each distributes flow across its bundle.</p>
+    <figure><div class="figure"><img src="assets/r-cfd-layouts.png" width="2250" height="780" loading="lazy" decoding="async" alt="Tube bundle layouts for the 33, 42, and 66 tube condenser generations"></div><figcaption>Three generations, three feed philosophies: a single centred axial port, top-fed vertical manifolds, and a centreline plenum.</figcaption></figure>
+    <table class="data">
+      <thead><tr><th>Generation</th><th class="mono">Tube ID (mm)</th><th>Inlet model</th><th class="mono">Flow CoV</th><th>Distribution</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">33-tube</td><td class="mono">3.14</td><td>single centred port, as built</td><td class="mono">131%</td><td>bullseye: one tube carries ~8&times; the mean</td></tr>
+        <tr><td class="mono">42-tube</td><td class="mono">1.39</td><td>top-fed manifolds, as built</td><td class="mono"><span class="t-real">10%</span></td><td>uniform, validated geometry</td></tr>
+        <tr><td class="mono">66-tube</td><td class="mono">1.60</td><td>simplified centreline feed</td><td class="mono">57%</td><td>centred jet favors middle tubes</td></tr>
+      </tbody>
+    </table>
+    <p>The caveat travels with the table: the three cases use different inlet fidelities, so the CoV column is not a clean apparatus comparison. The 42-tube number is the meaningful one, a faithful as-built model of the validated geometry. The 66-tube figure is inflated by its simplified centreline-jet inlet; its real lofted diffuser would distribute far better. What does transfer cleanly is the mechanism: wide bores make a tube bundle hydraulically near-invisible, so distribution is governed by the manifold feed geometry, not by tube count. That lesson shaped the next design.</p>
+    <figure><div class="figure"><img src="assets/r-cfd-dist42.png" width="2250" height="825" loading="lazy" decoding="async" alt="Per-tube flow distribution for the 42-tube manifold"></div><figcaption>Per-tube flow in the validated 42-tube manifold: coefficient of variation 10%, with the top-centre tubes slightly favored.</figcaption></figure>
+    <figure><div class="figure"><img src="assets/r-cfd-streamlines.png" width="1500" height="950" loading="lazy" decoding="async" alt="Streamlines through the 33-tube condenser colored by velocity"></div><figcaption>Streamlines through the 33-tube generation make its 131% CoV visible: the single centred port drives a bullseye pattern the later manifolds were designed to kill.</figcaption></figure>
+  </section>
+
+  <section class="doc-section">
+    <h2>The phase-change framework</h2>
+    <p>The second campaign simulates the boiling chamber itself with a volume-of-fluid phase-change solver. A 2D case calibrates the Lee-model mass-transfer coefficients against measured boiling curves on the validated 42-tube plain configuration, and reproduces both regimes that matter: stable nucleate boiling at moderate superheat and the vapor-blanket collapse near CHF. The 3D case carries the calibrated closure onto the real chamber geometry, meshed with snappyHexMesh around the actual tube bundle STL.</p>
+    <figure><div class="figure"><img src="assets/r-cfd-convergence.png" width="1120" height="672" loading="lazy" decoding="async" alt="Convergence history of the calibrated 2D phase-change case in the nucleate regime"></div><figcaption>The calibrated 2D case converging in the nucleate regime at 65 &deg;C wall temperature. The companion case at 85 &deg;C reproduces the CHF-side collapse.</figcaption></figure>
+    <div class="callout">
+      <span class="tag-lbl">The integrity standard</span>
+      <p>The framework paper is written under one rule: no unconverged or surrogate field is shown as a result. The 2D calibration and regime studies are results; the 3D production run to stationarity is stated as the remaining work, defined by what it requires rather than dressed up as done. A CFD framework you can trust is one that tells you exactly where its evidence stops.</p>
+    </div>
+    <p><a class="btn btn-ghost" href="assets/docs/mustafa_chamber_cfd_part2_preprint.pdf">Download Part II preprint (PDF, 25 pp.)</a></p>
+  </section>
+
+</div>
+</div>
+
+<nav class="wrap next-nav">
+  <a href="research-model.html">&larr; The model</a>
+  <a href="software.html">Next: Software &rarr;</a>
+</nav>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="colophon">
+      <span>All cases reproducible from research/chamber-model/openfoam on GitHub.</span>
+      <span>&copy; <span id="year">2026</span> Nooruldeen Mustafa</span>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>

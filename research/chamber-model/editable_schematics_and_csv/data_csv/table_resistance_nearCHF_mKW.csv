@@ -1,0 +1,5 @@
+configuration,R_chip_mKW,R_cond_mKW,R_tot_mKW
+"33-tube, plain",33,13,47
+"33-tube, microchannel",11,13,24
+"42-tube, plain",36,46,81
+"42-tube, microchannel",15,26,41

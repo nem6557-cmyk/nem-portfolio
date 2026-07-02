@@ -1,0 +1,11 @@
+FoamFile { version 2.0; format ascii; class volScalarField; object T; }
+dimensions [0 0 0 1 0 0 0];  internalField uniform 310;
+boundaryField
+{
+    chip      { type fixedValue;  value uniform 358; }   // varied by calibrate_lee_2d.py
+    condenser { type fixedValue;  value uniform 293; }   // 20 C coolant cold surface
+    floor     { type zeroGradient; }
+    walls     { type zeroGradient; }
+    front     { type empty; }
+    back      { type empty; }
+}

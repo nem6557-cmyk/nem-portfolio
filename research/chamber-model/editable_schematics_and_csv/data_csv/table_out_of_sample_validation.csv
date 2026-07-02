@@ -1,0 +1,7 @@
+metric,value_33tube,value_42tube
+in_sample_chipT_RMSE_K,3.7,4.8
+LOCO_heldout_chipT_RMSE_K,4.9,9.1
+LOCO_heldout_Tsat_RMSE_K,7.4,15.3
+Csf_fit_this_chamber_alone,0.0130,0.0121
+plainchip_RMSE_native_Csf_K,3.2,4.4
+plainchip_RMSE_transferred_Csf_K,3.4,4.6

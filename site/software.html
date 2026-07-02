@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0B1220">
+<title>Software and Tools - Nooruldeen Mustafa</title>
+<meta name="description" content="Software engineering beyond simulation: a production three-role daycare platform on React Native and Supabase, parametric OpenSCAD modeling, and the Python tooling behind this site.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="index.html" aria-label="Home">
+      <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
+        <line x1="8" y1="12" x2="20" y2="12" stroke="#4FD1C5" stroke-width="2.4" stroke-linecap="round"/>
+        <line x1="20" y1="12" x2="25" y2="22" stroke="#FF8A5B" stroke-width="2.4" stroke-linecap="round"/>
+        <circle cx="8" cy="12" r="3" fill="#0B1220" stroke="#4FD1C5" stroke-width="2.4"/>
+        <circle cx="20" cy="12" r="2.6" fill="#0B1220" stroke="#E8EDF4" stroke-width="2.2"/>
+        <circle cx="25" cy="22" r="2.6" fill="#FF8A5B"/>
+      </svg>
+      Nooruldeen Mustafa
+    </a>
+    <button class="nav-toggle" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 5h14M2 9h14M2 13h14"/></svg>
+    </button>
+    <nav class="nav-links">
+      <a href="research.html">research</a>
+      <a href="index.html#projects">projects</a>
+      <a href="software.html">software</a>
+      <a href="index.html#about">about</a>
+      <a class="gh" href="https://github.com/nem6557-cmyk/nem-portfolio" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<section class="doc-hero wrap">
+  <a class="back" href="index.html">&larr; Home</a>
+  <span class="eyebrow real">Software &middot; Full-stack, CAD, and tooling</span>
+  <h1>The software habit that makes the research move</h1>
+  <p class="lede">Simulation work rides on software craft, and the craft gets exercised outside the lab too. The anchor here is LittleJourney, a production-grade three-role daycare platform I built end to end, alongside parametric CAD in OpenSCAD and the Python tooling that generates and themes this site.</p>
+  <div class="tags"><span class="tag">React Native</span><span class="tag">Supabase</span><span class="tag">Stripe</span><span class="tag">TypeScript</span><span class="tag">OpenSCAD</span><span class="tag">Python</span></div>
+  <div class="readout-bar"><div class="cell real"><div class="val">24</div><div class="lbl">APP SCREENS, 3 ROLES</div></div><div class="cell real"><div class="val">10</div><div class="lbl">SUPABASE EDGE FUNCTIONS</div></div><div class="cell"><div class="val">100</div><div class="lbl">UNIT TESTS</div></div><div class="cell"><div class="val">19.5k</div><div class="lbl">LINES TS + SQL</div></div></div>
+</section>
+
+<div class="wrap">
+<div class="doc" id="main">
+
+  <section class="doc-section">
+    <h2>LittleJourney: a daycare platform, end to end</h2>
+    <p>LittleJourney keeps parents connected to their child's day: a realtime timeline of meals, naps, activities and photos, end-of-day narrative reports, encrypted messaging with caregivers, and tuition invoicing paid through Stripe. Caregivers log activities and attendance from the same app; admins manage enrollment, staff, and subscription tiers. Three roles, one codebase: Expo 54 and React 19 on TypeScript 5.9, backed by Supabase for Postgres, auth, realtime, and storage.</p>
+    <figure><div class="figure"><img src="assets/sw-lj-architecture.png" width="1470" height="660" loading="lazy" decoding="async" alt="Architecture diagram: React Native app, Supabase with row-level security, edge functions, and external services"></div><figcaption>The architecture. Every table carries row-level security, and the ten edge functions re-verify role claims server-side before anything touches Stripe or user data.</figcaption></figure>
+    <p>The parts I am proudest of are the unglamorous ones. Authorization is enforced twice, once by Postgres row-level security on every table and again inside the edge functions, so a compromised client still cannot reach another family's data; the most recent work was precisely an authorization-hardening pass across those functions. Payments run through dedicated functions for checkout, invoices, saved payment methods, and the Stripe webhook, and two functions exist purely for user rights: full data export and account deletion. A hundred unit tests and CI keep the 19.5 thousand lines of TypeScript and SQL honest.</p>
+    <p>The source is private, as the product carries live billing; this page and the architecture above are the case study.</p>
+  </section>
+
+  <section class="doc-section">
+    <h2>Parametric CAD in OpenSCAD</h2>
+    <p>For geometry that wants to be code, I model in OpenSCAD: fully parametric constructive solid geometry where every dimension is a named variable and an assembly is a function call. The piece below is an ABB IRB 760 palletizing robot modeled joint by joint, base, swing, parallel-linkage arm, and wrist, posable by setting joint angles. The same habit shows up in the research: the boiling chamber's CFD geometry lives as scripted, versioned CAD in the repository alongside the solver cases.</p>
+    <figure><div class="figure"><img src="assets/sw-abb-openscad.png" width="1600" height="1300" loading="lazy" decoding="async" alt="OpenSCAD parametric model of an ABB IRB 760 palletizing robot in isometric view"></div><figcaption>The IRB 760 assembly, posed in code. Parametric CAD means the model is a program: change a link length or a joint angle and the assembly follows.</figcaption></figure>
+  </section>
+
+  <section class="doc-section">
+    <h2>Tooling that built what you are reading</h2>
+    <p>This site is itself a small software project, and its tooling lives in the repository. A hue-preserving dark-theme converter re-themes light matplotlib figures onto the site palette without touching a data pixel, which is how a decade's worth of research plots share one visual language here. A page generator renders these research and software pages from content modules through a single shared shell, so the design stays byte-consistent everywhere. And the publication-analysis scripts that produced the model-validation statistics ship in the research package, so every number on these pages traces to a script you can run.</p>
+    <p><a class="link-arrow" href="https://github.com/nem6557-cmyk/nem-portfolio/tree/main/tools" target="_blank" rel="noopener">Browse the tooling on GitHub <span>&rarr;</span></a></p>
+  </section>
+
+</div>
+</div>
+
+<nav class="wrap next-nav">
+  <a href="research-cfd.html">&larr; The CFD program</a>
+  <a href="index.html">All sections &rarr;</a>
+</nav>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="colophon">
+      <span>LittleJourney is presented as a case study; its source is private.</span>
+      <span>&copy; <span id="year">2026</span> Nooruldeen Mustafa</span>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js"></script>
+</body>
+</html>

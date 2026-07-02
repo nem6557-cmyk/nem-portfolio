@@ -1,0 +1,6 @@
+configuration,RMSE_K,CHF_Wcm2
+"33-tube, plain",3.2,114
+"42-tube, plain",4.5,65
+"33-tube, microchannel",4.9,174
+"42-tube, microchannel",5.2,125
+all points,4.4,

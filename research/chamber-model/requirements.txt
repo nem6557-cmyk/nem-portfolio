@@ -1,0 +1,12 @@
+# Core model (master_chamber_model.py: `model` and `figures` subcommands)
+numpy>=1.24
+scipy>=1.10
+matplotlib>=3.7
+CoolProp>=6.6
+
+# Only needed for the `postprocess` subcommand (render OpenFOAM VTK fields)
+pyvista>=0.43
+vtk>=9.2
+
+# Only needed to read the raw .xlsx uncertainty workbooks in data/
+openpyxl>=3.1
