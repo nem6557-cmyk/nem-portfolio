@@ -19,7 +19,7 @@ import openseespy.opensees as ops
 import run_pushover as p5
 
 ASSETS = REPO / "site" / "assets"
-BG = "#0e1626"
+BG = "#ffffff"
 
 p5.build(braced=False)
 lams = ops.eigen(3)
@@ -56,11 +56,11 @@ for k, m in enumerate((1, 2, 3)):
     ghost = pv.PolyData(base, lines=np.array(lines))
     mesh = pv.PolyData(warped, lines=np.array(lines))
     mesh["u"] = np.linalg.norm(amp * phi, axis=1)
-    pl.add_mesh(ghost.tube(radius=0.03), color="#3a4a66", opacity=0.5)
+    pl.add_mesh(ghost.tube(radius=0.03), color="#B9C4D4", opacity=0.5)
     pl.add_mesh(mesh.tube(radius=0.07), scalars="u", cmap="turbo",
                 show_scalar_bar=False)
     pl.add_text(f"mode {m}   T = {periods[m-1]:.3f} s",
-                color="#dbe4f0", font_size=11, position="upper_edge")
+                color="#17212F", font_size=11, position="upper_edge")
     pl.camera_position = "xz"
     pl.camera.zoom(0.95)
 shot = HERE / "pv3-modes.png"

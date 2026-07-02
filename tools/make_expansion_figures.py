@@ -14,8 +14,8 @@ from PIL import Image
 from pathlib import Path
 
 A = Path(__file__).resolve().parent.parent / "site" / "assets"
-BG, FG, GRID = "#0e1626", "#dbe4f0", "#22304a"
-TEAL, ORANGE, FAINT = "#4FD1C5", "#FF8A5B", "#7083A6"
+BG, FG, GRID = "#ffffff", "#17212F", "#D9E2EC"
+TEAL, ORANGE, FAINT = "#0F766E", "#C2410C", "#8593A8"
 plt.rcParams.update({
     "figure.facecolor": BG, "axes.facecolor": BG, "savefig.facecolor": BG,
     "axes.edgecolor": GRID, "axes.labelcolor": FG, "text.color": FG,

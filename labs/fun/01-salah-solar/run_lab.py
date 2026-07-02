@@ -18,9 +18,9 @@ import matplotlib.pyplot as plt
 
 HERE = Path(__file__).resolve().parent
 ASSETS = HERE.parents[2] / "site" / "assets"
-BG, FG, GRID = "#0e1626", "#dbe4f0", "#22304a"
-TEAL, ORANGE, FAINT = "#4FD1C5", "#FF8A5B", "#7083A6"
-GOLD = "#E9C46A"
+BG, FG, GRID = "#ffffff", "#17212F", "#D9E2EC"
+TEAL, ORANGE, FAINT = "#0F766E", "#C2410C", "#8593A8"
+GOLD = "#B8860B"
 plt.rcParams.update({
     "figure.facecolor": BG, "axes.facecolor": BG, "savefig.facecolor": BG,
     "axes.edgecolor": GRID, "axes.labelcolor": FG, "text.color": FG,
@@ -95,7 +95,7 @@ ax.fill_between(days, series["fajr"], series["sunrise"],
 ax.fill_between(days, series["maghrib"], series["isha"],
                 color=ORANGE, alpha=0.15)
 for k, c in (("fajr", TEAL), ("sunrise", FAINT), ("dhuhr", GOLD),
-             ("asr", FG), ("maghrib", ORANGE), ("isha", "#c084fc")):
+             ("asr", FG), ("maghrib", ORANGE), ("isha", "#7C3AED")):
     ax.plot(days, series[k], color=c, lw=2, label=k)
 ax.set_xlabel("day of year 2026")
 ax.set_ylabel("local clock time (h)")

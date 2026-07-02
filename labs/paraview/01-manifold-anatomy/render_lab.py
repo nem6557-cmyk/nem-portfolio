@@ -17,7 +17,7 @@ HERE = Path(__file__).resolve().parent
 DATA = Path("/home/claude/expansion/chamber_model_final/openfoam"
             "/condenser_manifold_33_FINISHED/VTK/manifold_33_500")
 ASSETS = HERE.parents[2] / "site" / "assets"
-BG = "#0e1626"
+BG = "#ffffff"
 
 grid = pv.read(DATA / "internal.vtu").cell_data_to_point_data()
 grid["speed"] = np.linalg.norm(grid.point_data["U"], axis=1)
@@ -39,9 +39,9 @@ print("streamline points:", stream.n_points)
 
 pl = pv.Plotter(off_screen=True, window_size=(1500, 950))
 pl.set_background(BG)
-pl.add_mesh(grid.extract_surface(algorithm=None), color="#8fa2bf", opacity=0.06)
+pl.add_mesh(grid.extract_surface(algorithm=None), color="#64748B", opacity=0.06)
 pl.add_mesh(stream.tube(radius=0.0006), scalars="speed", cmap="turbo",
-            scalar_bar_args=dict(title="speed (m/s)", color="#dbe4f0",
+            scalar_bar_args=dict(title="speed (m/s)", color="#17212F",
                                  title_font_size=14, label_font_size=12))
 pl.camera_position = "iso"
 pl.camera.zoom(1.25)
@@ -52,9 +52,9 @@ sl = grid.slice(normal="y")
 pl = pv.Plotter(off_screen=True, window_size=(1500, 700))
 pl.set_background(BG)
 pl.add_mesh(sl, scalars="speed", cmap="turbo",
-            scalar_bar_args=dict(title="speed (m/s)", color="#dbe4f0",
+            scalar_bar_args=dict(title="speed (m/s)", color="#17212F",
                                  title_font_size=14, label_font_size=12))
-pl.add_mesh(grid.extract_surface(algorithm=None), color="#8fa2bf", opacity=0.05)
+pl.add_mesh(grid.extract_surface(algorithm=None), color="#64748B", opacity=0.05)
 pl.camera_position = "xz"
 pl.camera.zoom(1.6)
 pl.screenshot(HERE / "pv1-slice.png")

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0B1220">
+<meta name="theme-color" content="#F5F7FA">
 <title>OpenFOAM CFD Program - Nooruldeen Mustafa</title>
 <meta name="description" content="The OpenFOAM arm of the dissertation: a three-generation condenser manifold flow study finding distribution is governed by feed geometry, and a calibrated 2D/3D VOF phase-change framework for the boiling chamber.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -19,11 +19,11 @@
   <div class="wrap nav-inner">
     <a class="brand" href="index.html" aria-label="Home">
       <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
-        <line x1="8" y1="12" x2="20" y2="12" stroke="#4FD1C5" stroke-width="2.4" stroke-linecap="round"/>
-        <line x1="20" y1="12" x2="25" y2="22" stroke="#FF8A5B" stroke-width="2.4" stroke-linecap="round"/>
-        <circle cx="8" cy="12" r="3" fill="#0B1220" stroke="#4FD1C5" stroke-width="2.4"/>
-        <circle cx="20" cy="12" r="2.6" fill="#0B1220" stroke="#E8EDF4" stroke-width="2.2"/>
-        <circle cx="25" cy="22" r="2.6" fill="#FF8A5B"/>
+        <line x1="8" y1="12" x2="20" y2="12" stroke="#0F766E" stroke-width="2.4" stroke-linecap="round"/>
+        <line x1="20" y1="12" x2="25" y2="22" stroke="#C2410C" stroke-width="2.4" stroke-linecap="round"/>
+        <circle cx="8" cy="12" r="3" fill="#FFFFFF" stroke="#0F766E" stroke-width="2.4"/>
+        <circle cx="20" cy="12" r="2.6" fill="#FFFFFF" stroke="#384B63" stroke-width="2.2"/>
+        <circle cx="25" cy="22" r="2.6" fill="#C2410C"/>
       </svg>
       Nooruldeen Mustafa
     </a>
@@ -68,6 +68,8 @@
     <p>The caveat travels with the table: the three cases use different inlet fidelities, so the CoV column is not a clean apparatus comparison. The 42-tube number is the meaningful one, a faithful as-built model of the validated geometry. The 66-tube figure is inflated by its simplified centreline-jet inlet; its real lofted diffuser would distribute far better. What does transfer cleanly is the mechanism: wide bores make a tube bundle hydraulically near-invisible, so distribution is governed by the manifold feed geometry, not by tube count. That lesson shaped the next design.</p>
     <figure><div class="figure"><img src="assets/r-cfd-dist42.png" width="2250" height="825" loading="lazy" decoding="async" alt="Per-tube flow distribution for the 42-tube manifold"></div><figcaption>Per-tube flow in the validated 42-tube manifold: coefficient of variation 10%, with the top-centre tubes slightly favored.</figcaption></figure>
     <figure><div class="figure"><img src="assets/r-cfd-streamlines.png" width="1500" height="950" loading="lazy" decoding="async" alt="Streamlines through the 33-tube condenser colored by velocity"></div><figcaption>Streamlines through the 33-tube generation make its 131% CoV visible: the single centred port drives a bullseye pattern the later manifolds were designed to kill.</figcaption></figure>
+    <figure><div class="figure"><img src="assets/rcfd-pressure-generations.png" width="1440" height="360" loading="lazy" decoding="async" alt="Mid-plane kinematic pressure for the 33, 42, and 66 tube manifolds"></div><figcaption>The same three generations in pressure. The 33-tube manifold spends its head in a single central plume; the 42-tube spreads the drop across the header; the 66-tube reflects its simplified centreline inlet. Scales are per case because the absolute levels differ by design.</figcaption></figure>
+    <figure><div class="figure"><img src="assets/rcfd-axial-42.png" width="1440" height="460" loading="lazy" decoding="async" alt="Axial speed slices through the 42-tube manifold at three heights"></div><figcaption>Why the 42-tube manifold earns its 10% CoV: axial speed slices at 18%, 50%, and 82% of the bundle height stay comparable on a shared scale, so the header feeds the tubes evenly from bottom to top instead of dumping into the nearest few.</figcaption></figure>
   </section>
 
   <section class="doc-section">

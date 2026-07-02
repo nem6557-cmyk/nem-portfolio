@@ -114,6 +114,16 @@ PAGES = {
   <section class="doc-section">
     <h2>What it means at system level</h2>
     <p>At 195.3 W/cm&sup2; on 11.04 cm&sup2;, the chamber dissipates roughly 2156 W from a single substrate, above the TDP of every current and announced GPU, including 1400 W Blackwell-class parts, while operating as a fully passive thermosiphon on the refrigerant side inside a 1U envelope. Surface temperatures at CHF stayed moderate, 49 &deg;C for Novec at 20 &deg;C coolant and 77.9 &deg;C for water at 45 &deg;C, both under the 85 to 105 &deg;C junction limits of current processors. And because the working fluid is hermetically sealed and the facility side can reject heat through a dry cooler, the design eliminates cooling-tower evaporation, roughly 790,000 liters of water per year for a 50 kW rack.</p>
+  </section>
+
+  <section class="doc-section">
+    <h2>What perfusion does to the field</h2>
+    <p>Perfusion is the clinical wildcard. Flowing blood carries heat out of the treatment zone as a distributed sink, so the same delivered power produces a smaller, cooler lesion near vessels than in still tissue, which is exactly where ablation either succeeds or leaves surviving tissue behind. The analytical arm isolates that effect across probe temperatures: the perfused response curves sit systematically below their non-perfused counterparts, and the gap widens with drive temperature.</p>
+    {fig("rb-perfusion.png", 1200, 800, "Perfusion effect on tissue thermal response", "The perfusion effect at the lower probe temperature: perfused tissue plateaus cooler because blood flow removes heat continuously.")}
+    {fig("rb-perfusion-hot.png", 1200, 800, "Perfusion effect at elevated probe temperature", "At the higher probe temperature the perfusion gap grows: more heat is delivered, so more is available for blood to carry away, and the separation between the two curves widens.")}
+  </section>
+
+  <section class="doc-section">
     <div class="callout">
       <span class="tag-lbl">Honest scope</span>
       <p>The taper geometry used here was optimized for dielectric-scale bubbles; the water result makes clear a single taper cannot serve both fluids, and gap-height optimization for water is stated future work. Novec values above 51.4 W/cm&sup2; come from the 40 &deg;C coolant condition, and all comparisons are at the stated coolant temperatures, not a universal rating.</p>
@@ -206,6 +216,8 @@ PAGES = {
     <p>The caveat travels with the table: the three cases use different inlet fidelities, so the CoV column is not a clean apparatus comparison. The 42-tube number is the meaningful one, a faithful as-built model of the validated geometry. The 66-tube figure is inflated by its simplified centreline-jet inlet; its real lofted diffuser would distribute far better. What does transfer cleanly is the mechanism: wide bores make a tube bundle hydraulically near-invisible, so distribution is governed by the manifold feed geometry, not by tube count. That lesson shaped the next design.</p>
     {fig("r-cfd-dist42.png", 2250, 825, "Per-tube flow distribution for the 42-tube manifold", "Per-tube flow in the validated 42-tube manifold: coefficient of variation 10%, with the top-centre tubes slightly favored.")}
     {fig("r-cfd-streamlines.png", 1500, 950, "Streamlines through the 33-tube condenser colored by velocity", "Streamlines through the 33-tube generation make its 131% CoV visible: the single centred port drives a bullseye pattern the later manifolds were designed to kill.")}
+    {fig("rcfd-pressure-generations.png", 1440, 360, "Mid-plane kinematic pressure for the 33, 42, and 66 tube manifolds", "The same three generations in pressure. The 33-tube manifold spends its head in a single central plume; the 42-tube spreads the drop across the header; the 66-tube reflects its simplified centreline inlet. Scales are per case because the absolute levels differ by design.")}
+    {fig("rcfd-axial-42.png", 1440, 460, "Axial speed slices through the 42-tube manifold at three heights", "Why the 42-tube manifold earns its 10% CoV: axial speed slices at 18%, 50%, and 82% of the bundle height stay comparable on a shared scale, so the header feeds the tubes evenly from bottom to top instead of dumping into the nearest few.")}
   </section>
 
   <section class="doc-section">
@@ -545,6 +557,17 @@ lab("Plume art", "FUN-3",
     <h2>Validation at the medical bar</h2>
     <p>For the 324 K non-perfused case, the tuned model, effective conductivity 0.55 W/m-K, specific heat 3800 J/kg-K, interface coefficient 3800 W/m&sup2;-K, tracks the 3 mm thermocouple with an RMSE of 0.117 &deg;C and R&sup2; of 0.972, and the 7 mm probe at 0.114 &deg;C. Agreement is quantified the way medical instrumentation demands: mean absolute percentage error against explicit pass criteria, 7.2% at TM1 against a 15% bar and 9.2% at TM2 against 20%, plus Bland-Altman bias and limits of agreement, with biases of hundredths of a degree. All four cases pass their criteria.</p>
     {fig("rb-validation.png", 1500, 850, "Numerical model temperature histories overlaid on thermocouple measurements", "Model against thermocouples at both depths for the 324 K non-perfused case. The disagreement lives in the second decimal place.")}
+    {fig("rb-validation-perf.png", 1500, 850, "Perfused-case model and thermocouple temperature histories", "The perfused counterpart at the same probe temperature. Blood flow bleeds heat out of the tissue, so the whole field sits cooler and the steady plateau arrives lower; the model tracks that shift too.")}
+  </section>
+
+  <section class="doc-section">
+    <h2>What perfusion does to the field</h2>
+    <p>Perfusion is the clinical wildcard. Flowing blood carries heat out of the treatment zone as a distributed sink, so the same delivered power produces a smaller, cooler lesion near vessels than in still tissue, which is exactly where ablation either succeeds or leaves surviving tissue behind. The analytical arm isolates that effect across probe temperatures: the perfused response curves sit systematically below their non-perfused counterparts, and the gap widens with drive temperature.</p>
+    {fig("rb-perfusion.png", 1200, 800, "Perfusion effect on tissue thermal response", "The perfusion effect at the lower probe temperature: perfused tissue plateaus cooler because blood flow removes heat continuously.")}
+    {fig("rb-perfusion-hot.png", 1200, 800, "Perfusion effect at elevated probe temperature", "At the higher probe temperature the perfusion gap grows: more heat is delivered, so more is available for blood to carry away, and the separation between the two curves widens.")}
+  </section>
+
+  <section class="doc-section">
     <div class="callout">
       <span class="tag-lbl">Honest scope</span>
       <p>These are effective-property models tuned per protocol and validated against benchtop thermocouple data; they are decision-support physics, not patient-specific prediction. The tuned parameters are reported with the fits so the calibration is inspectable rather than buried.</p>

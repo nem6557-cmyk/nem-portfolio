@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0B1220">
+<meta name="theme-color" content="#F5F7FA">
 <title>Bioheat Modeling for Cardiac Ablation - Nooruldeen Mustafa</title>
 <meta name="description" content="Transient bioheat transfer modeling for cardiac radiofrequency ablation with sub-0.12 C RMSE validation against thermocouple measurements, including Bland-Altman agreement analysis.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -19,11 +19,11 @@
   <div class="wrap nav-inner">
     <a class="brand" href="index.html" aria-label="Home">
       <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
-        <line x1="8" y1="12" x2="20" y2="12" stroke="#4FD1C5" stroke-width="2.4" stroke-linecap="round"/>
-        <line x1="20" y1="12" x2="25" y2="22" stroke="#FF8A5B" stroke-width="2.4" stroke-linecap="round"/>
-        <circle cx="8" cy="12" r="3" fill="#0B1220" stroke="#4FD1C5" stroke-width="2.4"/>
-        <circle cx="20" cy="12" r="2.6" fill="#0B1220" stroke="#E8EDF4" stroke-width="2.2"/>
-        <circle cx="25" cy="22" r="2.6" fill="#FF8A5B"/>
+        <line x1="8" y1="12" x2="20" y2="12" stroke="#0F766E" stroke-width="2.4" stroke-linecap="round"/>
+        <line x1="20" y1="12" x2="25" y2="22" stroke="#C2410C" stroke-width="2.4" stroke-linecap="round"/>
+        <circle cx="8" cy="12" r="3" fill="#FFFFFF" stroke="#0F766E" stroke-width="2.4"/>
+        <circle cx="20" cy="12" r="2.6" fill="#FFFFFF" stroke="#384B63" stroke-width="2.2"/>
+        <circle cx="25" cy="22" r="2.6" fill="#C2410C"/>
       </svg>
       Nooruldeen Mustafa
     </a>
@@ -63,6 +63,17 @@
     <h2>Validation at the medical bar</h2>
     <p>For the 324 K non-perfused case, the tuned model, effective conductivity 0.55 W/m-K, specific heat 3800 J/kg-K, interface coefficient 3800 W/m&sup2;-K, tracks the 3 mm thermocouple with an RMSE of 0.117 &deg;C and R&sup2; of 0.972, and the 7 mm probe at 0.114 &deg;C. Agreement is quantified the way medical instrumentation demands: mean absolute percentage error against explicit pass criteria, 7.2% at TM1 against a 15% bar and 9.2% at TM2 against 20%, plus Bland-Altman bias and limits of agreement, with biases of hundredths of a degree. All four cases pass their criteria.</p>
     <figure><div class="figure"><img src="assets/rb-validation.png" width="1500" height="850" loading="lazy" decoding="async" alt="Numerical model temperature histories overlaid on thermocouple measurements"></div><figcaption>Model against thermocouples at both depths for the 324 K non-perfused case. The disagreement lives in the second decimal place.</figcaption></figure>
+    <figure><div class="figure"><img src="assets/rb-validation-perf.png" width="1500" height="850" loading="lazy" decoding="async" alt="Perfused-case model and thermocouple temperature histories"></div><figcaption>The perfused counterpart at the same probe temperature. Blood flow bleeds heat out of the tissue, so the whole field sits cooler and the steady plateau arrives lower; the model tracks that shift too.</figcaption></figure>
+  </section>
+
+  <section class="doc-section">
+    <h2>What perfusion does to the field</h2>
+    <p>Perfusion is the clinical wildcard. Flowing blood carries heat out of the treatment zone as a distributed sink, so the same delivered power produces a smaller, cooler lesion near vessels than in still tissue, which is exactly where ablation either succeeds or leaves surviving tissue behind. The analytical arm isolates that effect across probe temperatures: the perfused response curves sit systematically below their non-perfused counterparts, and the gap widens with drive temperature.</p>
+    <figure><div class="figure"><img src="assets/rb-perfusion.png" width="1200" height="800" loading="lazy" decoding="async" alt="Perfusion effect on tissue thermal response"></div><figcaption>The perfusion effect at the lower probe temperature: perfused tissue plateaus cooler because blood flow removes heat continuously.</figcaption></figure>
+    <figure><div class="figure"><img src="assets/rb-perfusion-hot.png" width="1200" height="800" loading="lazy" decoding="async" alt="Perfusion effect at elevated probe temperature"></div><figcaption>At the higher probe temperature the perfusion gap grows: more heat is delivered, so more is available for blood to carry away, and the separation between the two curves widens.</figcaption></figure>
+  </section>
+
+  <section class="doc-section">
     <div class="callout">
       <span class="tag-lbl">Honest scope</span>
       <p>These are effective-property models tuned per protocol and validated against benchtop thermocouple data; they are decision-support physics, not patient-specific prediction. The tuned parameters are reported with the fits so the calibration is inspectable rather than buried.</p>

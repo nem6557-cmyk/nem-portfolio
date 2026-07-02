@@ -1,33 +1,33 @@
 /* =========================================================================
    Nooruldeen Mustafa - physics simulation portfolio
-   Design language: a simulation readout. Cool teal = simulation / ideal /
-   model; warm amber = hardware / heat / the gap. Dark instrument surfaces,
-   mono reserved for data and labels, Inter for interface chrome.
+   Design language: a lab report. Cool teal = simulation / ideal / model;
+   warm rust = hardware / heat / the gap. Light paper surfaces, mono
+   reserved for data and labels, Inter for interface chrome.
    ========================================================================= */
 
 :root {
   /* surfaces */
-  --bg:        #0B1220;
-  --surface:   #111A2B;
-  --surface-2: #0E1626;   /* exact background of every figure PNG */
+  --bg:        #F5F7FA;
+  --surface:   #FFFFFF;
+  --surface-2: #FFFFFF;   /* exact background of every figure PNG */
 
   /* ink */
-  --ink:    #E9EEF6;
-  --ink-2:  #C4CFDF;
-  --muted:  #8A97AC;
-  --faint:  #7083A6;
+  --ink:    #17212F;
+  --ink-2:  #384B63;
+  --muted:  #5B6B80;
+  --faint:  #8593A8;
 
   /* lines */
-  --line:      #22304A;
-  --line-soft: #1A2740;
+  --line:      #DCE3EC;
+  --line-soft: #EBF0F5;
 
   /* semantic accents */
-  --sim:      #4FD1C5;
-  --real:     #FF8A5B;
-  --warn:     #FFC24B;
-  --sim-ink:  #052824;
-  --sim-dim:  rgba(79, 209, 197, 0.12);
-  --real-dim: rgba(255, 138, 91, 0.12);
+  --sim:      #0F766E;
+  --real:     #C2410C;
+  --warn:     #B45309;
+  --sim-ink:  #F0FDFA;
+  --sim-dim:  rgba(15, 118, 110, 0.10);
+  --real-dim: rgba(194, 65, 12, 0.10);
 
   /* geometry */
   --maxw: 1120px;
@@ -37,9 +37,9 @@
   --r-lg: 16px;
 
   /* elevation */
-  --shadow-sm: 0 8px 24px -16px rgba(2, 6, 16, 0.7);
-  --shadow-md: 0 16px 48px -28px rgba(2, 6, 16, 0.75);
-  --shadow-lg: 0 32px 88px -48px rgba(2, 6, 16, 0.8);
+  --shadow-sm: 0 8px 24px -16px rgba(23, 33, 47, 0.16);
+  --shadow-md: 0 16px 48px -28px rgba(23, 33, 47, 0.18);
+  --shadow-lg: 0 32px 88px -48px rgba(23, 33, 47, 0.22);
 
   /* type */
   --font-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
@@ -206,7 +206,7 @@ table.data th {
 }
 .btn:active { transform: translateY(1px); }
 .btn-primary {
-  background: linear-gradient(180deg, #5fdccf 0%, var(--sim) 55%);
+  background: linear-gradient(180deg, #15968a 0%, var(--sim) 55%);
   color: var(--sim-ink);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), var(--shadow-sm);
 }
@@ -261,7 +261,7 @@ table.data th {
   border: 1px solid color-mix(in srgb, var(--line) 72%, var(--sim));
   border-radius: var(--r-lg);
   overflow: hidden;
-  box-shadow: inset 0 1px 0 rgba(233, 238, 246, 0.05), var(--shadow-lg);
+  box-shadow: inset 0 1px 0 rgba(23, 33, 47, 0.04), var(--shadow-lg);
 }
 .sim-panel .cap {
   display: flex;
@@ -451,7 +451,7 @@ table.data th {
   border: 1px solid var(--line);
   border-radius: var(--r-lg);
   padding: 10px;
-  box-shadow: inset 0 1px 0 rgba(233, 238, 246, 0.04), var(--shadow-md);
+  box-shadow: inset 0 1px 0 rgba(23, 33, 47, 0.04), var(--shadow-md);
 }
 .figure img { width: 100%; height: auto; display: block; border-radius: calc(var(--r-lg) - 8px); }
 .figure.tight { padding: 8px; }
@@ -623,7 +623,7 @@ pre {
   padding: 20px 22px;
   overflow-x: auto;
   margin: 0 0 18px;
-  box-shadow: inset 0 1px 0 rgba(233, 238, 246, 0.04);
+  box-shadow: inset 0 1px 0 rgba(23, 33, 47, 0.04);
 }
 pre code {
   font-family: var(--font-mono);

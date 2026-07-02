@@ -24,7 +24,7 @@ CASES = {
         BASE / "condenser_manifold_66_v3/run66_results/VTK/run66_500/internal.vtu",
 }
 ASSETS = HERE.parents[2] / "site" / "assets"
-BG = "#0e1626"
+BG = "#ffffff"
 
 panels = {}
 ranges = {"speed": 0.0, "p": [np.inf, -np.inf]}
@@ -49,9 +49,9 @@ for name, g in grids.items():
                     scalar_bar_args=dict(
                         title=("speed (m/s)" if field == "speed"
                                else "kinematic p (m2/s2)"),
-                        color="#dbe4f0", title_font_size=13,
+                        color="#17212F", title_font_size=13,
                         label_font_size=11))
-        pl.add_mesh(g.extract_surface(algorithm=None), color="#8fa2bf",
+        pl.add_mesh(g.extract_surface(algorithm=None), color="#64748B",
                     opacity=0.05)
         pl.camera_position = "xz"
         pl.camera.zoom(1.55)
@@ -68,9 +68,9 @@ for j, name in enumerate(CASES):
         ax.imshow(plt.imread(panels[(field, name)]))
         ax.set_axis_off()
         if i == 0:
-            ax.set_title(name, color="#dbe4f0", fontsize=11.5, pad=8)
+            ax.set_title(name, color="#17212F", fontsize=11.5, pad=8)
 fig.suptitle("Mid-plane speed (top) and pressure (bottom), matched scales "
-             "per row", color="#dbe4f0", fontsize=12.5, y=0.99)
+             "per row", color="#17212F", fontsize=12.5, y=0.99)
 fig.tight_layout()
 for p in (ASSETS / "pv2-generation-compare.png",
           HERE / "pv2-generation-compare.png"):

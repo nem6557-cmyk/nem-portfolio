@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#0B1220">
+<meta name="theme-color" content="#F5F7FA">
 <title>Boiling Chamber Experiments - Nooruldeen Mustafa</title>
 <meta name="description" content="Subcooled pool boiling experiments on a patented 1U chamber: water at 12 kPa to 195.3 W/cm2, the highest reported HFE-7000 CHF above 1 cm2, and the coolant-temperature coupling that governs both.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -19,11 +19,11 @@
   <div class="wrap nav-inner">
     <a class="brand" href="index.html" aria-label="Home">
       <svg class="glyph" viewBox="0 0 32 32" aria-hidden="true">
-        <line x1="8" y1="12" x2="20" y2="12" stroke="#4FD1C5" stroke-width="2.4" stroke-linecap="round"/>
-        <line x1="20" y1="12" x2="25" y2="22" stroke="#FF8A5B" stroke-width="2.4" stroke-linecap="round"/>
-        <circle cx="8" cy="12" r="3" fill="#0B1220" stroke="#4FD1C5" stroke-width="2.4"/>
-        <circle cx="20" cy="12" r="2.6" fill="#0B1220" stroke="#E8EDF4" stroke-width="2.2"/>
-        <circle cx="25" cy="22" r="2.6" fill="#FF8A5B"/>
+        <line x1="8" y1="12" x2="20" y2="12" stroke="#0F766E" stroke-width="2.4" stroke-linecap="round"/>
+        <line x1="20" y1="12" x2="25" y2="22" stroke="#C2410C" stroke-width="2.4" stroke-linecap="round"/>
+        <circle cx="8" cy="12" r="3" fill="#FFFFFF" stroke="#0F766E" stroke-width="2.4"/>
+        <circle cx="20" cy="12" r="2.6" fill="#FFFFFF" stroke="#384B63" stroke-width="2.2"/>
+        <circle cx="25" cy="22" r="2.6" fill="#C2410C"/>
       </svg>
       Nooruldeen Mustafa
     </a>
@@ -75,6 +75,16 @@
   <section class="doc-section">
     <h2>What it means at system level</h2>
     <p>At 195.3 W/cm&sup2; on 11.04 cm&sup2;, the chamber dissipates roughly 2156 W from a single substrate, above the TDP of every current and announced GPU, including 1400 W Blackwell-class parts, while operating as a fully passive thermosiphon on the refrigerant side inside a 1U envelope. Surface temperatures at CHF stayed moderate, 49 &deg;C for Novec at 20 &deg;C coolant and 77.9 &deg;C for water at 45 &deg;C, both under the 85 to 105 &deg;C junction limits of current processors. And because the working fluid is hermetically sealed and the facility side can reject heat through a dry cooler, the design eliminates cooling-tower evaporation, roughly 790,000 liters of water per year for a 50 kW rack.</p>
+  </section>
+
+  <section class="doc-section">
+    <h2>What perfusion does to the field</h2>
+    <p>Perfusion is the clinical wildcard. Flowing blood carries heat out of the treatment zone as a distributed sink, so the same delivered power produces a smaller, cooler lesion near vessels than in still tissue, which is exactly where ablation either succeeds or leaves surviving tissue behind. The analytical arm isolates that effect across probe temperatures: the perfused response curves sit systematically below their non-perfused counterparts, and the gap widens with drive temperature.</p>
+    <figure><div class="figure"><img src="assets/rb-perfusion.png" width="1200" height="800" loading="lazy" decoding="async" alt="Perfusion effect on tissue thermal response"></div><figcaption>The perfusion effect at the lower probe temperature: perfused tissue plateaus cooler because blood flow removes heat continuously.</figcaption></figure>
+    <figure><div class="figure"><img src="assets/rb-perfusion-hot.png" width="1200" height="800" loading="lazy" decoding="async" alt="Perfusion effect at elevated probe temperature"></div><figcaption>At the higher probe temperature the perfusion gap grows: more heat is delivered, so more is available for blood to carry away, and the separation between the two curves widens.</figcaption></figure>
+  </section>
+
+  <section class="doc-section">
     <div class="callout">
       <span class="tag-lbl">Honest scope</span>
       <p>The taper geometry used here was optimized for dielectric-scale bubbles; the water result makes clear a single taper cannot serve both fluids, and gap-height optimization for water is stated future work. Novec values above 51.4 W/cm&sup2; come from the 40 &deg;C coolant condition, and all comparisons are at the stated coolant temperatures, not a universal rating.</p>
